@@ -1,7 +1,7 @@
 """
 models.py — SQLAlchemy database table definitions.
 
-Each class here becomes a table in the SQLite database.
+Each class here becomes a table in the SQLite/PostgreSQL database.
 """
 
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Text, Boolean
@@ -77,3 +77,20 @@ class Alert(Base):
     severity = Column(String)      # e.g. "moderate", "severe"
     message = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class TelemetryCacheRecord(Base):
+    """
+    Persistent L2 telemetry cache for Open-Meteo responses.
+    Survives server restarts and provides persistent stale fallback during provider rate limits.
+    """
+    __tablename__ = "telemetry_cache"
+
+    id = Column(Integer, primary_key=True, index=True)
+    cache_key = Column(String, unique=True, index=True)
+    endpoint_type = Column(String, index=True)
+    latitude = Column(Float, index=True, nullable=True)
+    longitude = Column(Float, index=True, nullable=True)
+    data_json = Column(Text)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    expires_at = Column(DateTime, index=True)

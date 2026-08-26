@@ -1,5 +1,5 @@
 """
-air_quality_service.py — Fetches air quality data from Open-Meteo Air Quality API with caching, singleflight deduplication, and retry logic.
+air_quality_service.py — Fetches air quality data from Open-Meteo Air Quality API with two-tier caching, singleflight deduplication, and retry logic.
 
 Open-Meteo Air Quality API is FREE and requires NO API key.
 Docs: https://open-meteo.com/en/docs/air-quality-api
@@ -53,7 +53,8 @@ async def _fetch_air_quality_upstream(lat: float, lon: float, location_name: str
                 response = await client.get(url, params=params)
 
                 if response.status_code == 429:
-                    logger.error(f"[UPSTREAM 429] Open-Meteo Air Quality returned 429 Too Many Requests for ({lat}, {lon})")
+                    retry_after = response.headers.get("Retry-After", "few")
+                    logger.error(f"[UPSTREAM 429] Open-Meteo Air Quality returned 429 Too Many Requests for ({lat}, {lon}) (Retry-After: {retry_after})")
                     raise HTTPException(
                         status_code=429,
                         detail="Air quality telemetry provider is temporarily rate-limited. Please retry in a few moments."
@@ -120,11 +121,13 @@ async def _fetch_air_quality_upstream(lat: float, lon: float, location_name: str
 async def get_air_quality(lat: float, lon: float, location_name: str = "Unknown") -> dict:
     """
     Fetch air quality data for a given location.
-    Uses 10-minute server-side caching and singleflight request deduplication.
+    Uses two-tier (L1 RAM + L2 SQLite) caching, singleflight request deduplication, and stale fallback.
     """
     cache_key = f"air_quality:{round(lat, 2)}:{round(lon, 2)}"
     return await air_quality_cache.get_or_fetch(
         cache_key,
         lambda: _fetch_air_quality_upstream(lat, lon, location_name),
+        lat=lat,
+        lon=lon,
         ttl_seconds=600.0,
     )

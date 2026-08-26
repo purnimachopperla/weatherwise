@@ -1,5 +1,5 @@
 """
-weather_service.py — Fetches and processes weather data from Open-Meteo with caching, singleflight deduplication, and retry logic.
+weather_service.py — Fetches and processes weather data from Open-Meteo with two-tier caching, singleflight deduplication, and retry logic.
 
 Open-Meteo is a FREE, open-source weather API that requires NO API key.
 Docs: https://open-meteo.com/en/docs
@@ -74,7 +74,8 @@ async def _fetch_weather_upstream(lat: float, lon: float, location_name: str) ->
                 response = await client.get(url, params=params)
 
                 if response.status_code == 429:
-                    logger.error(f"[UPSTREAM 429] Open-Meteo returned 429 Too Many Requests for ({lat}, {lon})")
+                    retry_after = response.headers.get("Retry-After", "few")
+                    logger.error(f"[UPSTREAM 429] Open-Meteo returned 429 Too Many Requests for ({lat}, {lon}) (Retry-After: {retry_after})")
                     raise HTTPException(
                         status_code=429,
                         detail="Weather telemetry provider is temporarily rate-limited. Please retry in a few moments."
@@ -200,12 +201,14 @@ async def _fetch_weather_upstream(lat: float, lon: float, location_name: str) ->
 async def get_weather(lat: float, lon: float, location_name: str = "Unknown") -> dict:
     """
     Fetch current weather + hourly + daily forecast from Open-Meteo.
-    Uses 10-minute server-side caching and singleflight request deduplication.
+    Uses two-tier (L1 RAM + L2 SQLite) caching, singleflight request deduplication, and stale fallback.
     """
     cache_key = f"weather:{round(lat, 2)}:{round(lon, 2)}"
     return await weather_cache.get_or_fetch(
         cache_key,
         lambda: _fetch_weather_upstream(lat, lon, location_name),
+        lat=lat,
+        lon=lon,
         ttl_seconds=600.0,
     )
 
@@ -282,4 +285,4 @@ async def reverse_geocode(lat: float, lon: float) -> dict:
             logger.warning(f"Reverse geocode fallback: {exc}")
             return {"name": f"{round(lat, 2)}°N, {round(lon, 2)}°E", "country": ""}
 
-    return await geocoding_cache.get_or_fetch(cache_key, _fetch, ttl_seconds=3600.0)
+    return await geocoding_cache.get_or_fetch(cache_key, _fetch, lat=lat, lon=lon, ttl_seconds=3600.0)
