@@ -1,7 +1,7 @@
 /**
  * Forecast.jsx — Structured 7-Day Environmental Forecast Table.
  *
- * Professional table/list layout presenting:
+ * Professional table layout presenting:
  * Columns: Day | Condition | Temperature Range (Low / High) | Rain Chance | Environmental AQI
  */
 
@@ -34,21 +34,21 @@ export default function Forecast({ weather, airQuality }) {
   const range = globalMax - globalMin || 1;
 
   return (
-    <div className="panel-card p-5 sm:p-6 bg-white border border-slate-200 h-full flex flex-col justify-between">
+    <div className="panel-card p-6 sm:p-8 lg:p-9 bg-white border border-slate-200 h-full flex flex-col justify-between">
       <div>
         {/* Header */}
-        <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
-          <div className="flex items-center gap-2">
-            <Calendar size={16} className="text-teal-700" />
-            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+        <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-100">
+          <div className="flex items-center gap-2.5">
+            <Calendar size={18} className="text-teal-700" />
+            <h3 className="text-xs sm:text-sm font-bold text-slate-800 uppercase tracking-wider">
               7-Day Environmental Forecast Table
             </h3>
           </div>
-          <span className="text-[11px] text-slate-400 font-medium">Daily Telemetry</span>
+          <span className="text-xs text-slate-400 font-medium">Daily Telemetry</span>
         </div>
 
         {/* Table Header Columns */}
-        <div className="hidden sm:grid grid-cols-[80px_110px_1fr_65px_70px] items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2.5 pb-2">
+        <div className="hidden sm:grid grid-cols-[85px_120px_1fr_75px_80px] items-center gap-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider px-3 pb-2.5">
           <span>Day</span>
           <span>Condition</span>
           <span>Thermal Range</span>
@@ -57,29 +57,28 @@ export default function Forecast({ weather, airQuality }) {
         </div>
 
         {/* Daily Rows */}
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           {daily.map((day, i) => {
             const WeatherIcon = getWeatherIconComponent(day.weather_code);
             const isToday = i === 0;
             const barLeft = ((day.temp_min - globalMin) / range) * 100;
             const barWidth = ((day.temp_max - day.temp_min) / range) * 100;
 
-            // Estimated daily AQI variation relative to current AQI
             const dayAqi = Math.max(15, Math.round(currentAqi + (i * 2.5) - 3));
             const aqiStyle = getAQIBadgeStyle(dayAqi);
 
             return (
               <div
                 key={day.date}
-                className={`grid grid-cols-[60px_1fr_65px] sm:grid-cols-[80px_110px_1fr_65px_70px] items-center gap-2 py-2.5 px-2.5 rounded-lg border transition-colors ${
+                className={`grid grid-cols-[70px_1fr_70px] sm:grid-cols-[85px_120px_1fr_75px_80px] items-center gap-3 py-3 px-3.5 rounded-xl border transition-colors ${
                   isToday
-                    ? 'bg-teal-50/50 border-teal-200'
-                    : 'bg-white border-slate-100 hover:bg-slate-50'
+                    ? 'bg-teal-50/60 border-teal-200 shadow-2xs'
+                    : 'bg-slate-50/50 border-slate-100 hover:bg-slate-50'
                 }`}
               >
                 {/* Day Name */}
                 <div className="flex flex-col">
-                  <span className={`text-xs ${isToday ? 'text-teal-800 font-bold' : 'text-slate-700 font-medium'}`}>
+                  <span className={`text-xs sm:text-sm ${isToday ? 'text-teal-900 font-bold' : 'text-slate-700 font-semibold'}`}>
                     {isToday ? 'Today' : day.day_name}
                   </span>
                   <span className="text-[10px] text-slate-400 sm:hidden">
@@ -88,18 +87,18 @@ export default function Forecast({ weather, airQuality }) {
                 </div>
 
                 {/* Condition (with Icon) */}
-                <div className="hidden sm:flex items-center gap-1.5 min-w-0">
-                  <WeatherIcon size={15} className="text-teal-700 flex-shrink-0" />
+                <div className="hidden sm:flex items-center gap-2 min-w-0">
+                  <WeatherIcon size={16} className="text-teal-700 flex-shrink-0" />
                   <span className="text-xs text-slate-600 truncate">{day.weather_condition || 'Clear'}</span>
                 </div>
 
                 {/* Thermal Range Bar & High/Low */}
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-slate-500 font-medium min-w-[20px] text-right">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-xs text-slate-500 font-medium min-w-[22px] text-right">
                     {Math.round(day.temp_min)}°
                   </span>
 
-                  <div className="flex-1 relative h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                  <div className="flex-1 relative h-2 rounded-full bg-slate-200/70 overflow-hidden">
                     <div
                       className="absolute top-0 bottom-0 rounded-full bg-teal-600"
                       style={{
@@ -109,21 +108,21 @@ export default function Forecast({ weather, airQuality }) {
                     />
                   </div>
 
-                  <span className="text-xs text-slate-900 font-bold min-w-[20px]">
+                  <span className="text-xs text-slate-900 font-bold min-w-[22px]">
                     {Math.round(day.temp_max)}°
                   </span>
                 </div>
 
                 {/* Rain Probability */}
-                <div className="text-right text-xs font-semibold text-sky-700 flex items-center justify-end gap-0.5">
-                  <Droplets size={11} className="text-sky-600" />
+                <div className="text-right text-xs font-bold text-sky-700 flex items-center justify-end gap-1">
+                  <Droplets size={12} className="text-sky-600" />
                   <span>{day.rain_probability || 0}%</span>
                 </div>
 
                 {/* AQI Status Badge */}
                 <div className="hidden sm:flex justify-end">
                   <span
-                    className="text-[10px] font-bold px-1.5 py-0.5 rounded border"
+                    className="text-[11px] font-bold px-2 py-0.5 rounded-md border shadow-2xs"
                     style={{
                       backgroundColor: aqiStyle.bg,
                       borderColor: aqiStyle.border,
@@ -141,24 +140,24 @@ export default function Forecast({ weather, airQuality }) {
 
       {/* Sunrise & Sunset Footer */}
       {daily[0] && (
-        <div className="flex items-center justify-between gap-3 pt-3.5 mt-4 border-t border-slate-100 text-xs">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-amber-50 border border-amber-100 flex items-center justify-center flex-shrink-0">
-              <Sunrise size={14} className="text-amber-700" />
+        <div className="flex items-center justify-between gap-4 pt-4 mt-6 border-t border-slate-100 text-xs">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center flex-shrink-0 shadow-2xs">
+              <Sunrise size={16} className="text-amber-700" />
             </div>
             <div>
               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Sunrise</p>
-              <p className="font-semibold text-slate-700">{daily[0].sunrise}</p>
+              <p className="font-bold text-slate-800 text-xs sm:text-sm">{daily[0].sunrise}</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-orange-50 border border-orange-100 flex items-center justify-center flex-shrink-0">
-              <Sunset size={14} className="text-orange-700" />
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center flex-shrink-0 shadow-2xs">
+              <Sunset size={16} className="text-orange-700" />
             </div>
             <div>
               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Sunset</p>
-              <p className="font-semibold text-slate-700">{daily[0].sunset}</p>
+              <p className="font-bold text-slate-800 text-xs sm:text-sm">{daily[0].sunset}</p>
             </div>
           </div>
         </div>

@@ -3,7 +3,7 @@
  *
  * Visual Features:
  * - Horizontally scrollable inside container without page-level overflow
- * - Lucide React icons for meteorological accuracy
+ * - Generous card width and padding to prevent visual merging
  * - Clear active highlight for current hour ("Now")
  */
 
@@ -30,23 +30,23 @@ export default function HourlyForecast({ weather }) {
 
   return (
     <section aria-label="24-Hour Telemetry Forecast" className="fade-in w-full">
-      <div className="panel-card p-5 sm:p-6 bg-white border border-slate-200">
+      <div className="panel-card p-6 sm:p-8 lg:p-9 bg-white border border-slate-200">
         {/* Header */}
-        <div className="flex items-center justify-between mb-3.5">
-          <div className="flex items-center gap-2">
-            <Clock size={16} className="text-teal-700" />
-            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-              24-Hour Telemetry Forecast
+        <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+          <div className="flex items-center gap-2.5">
+            <Clock size={18} className="text-teal-700" />
+            <h3 className="text-xs sm:text-sm font-bold text-slate-800 uppercase tracking-wider">
+              24-Hour Telemetry Forecast Timeline
             </h3>
           </div>
-          <span className="text-[11px] text-slate-400 font-medium hidden sm:inline">
-            Scroll horizontally to view 24h timeline →
+          <span className="text-xs text-slate-400 font-medium hidden sm:inline">
+            Scroll horizontally to inspect hourly telemetry →
           </span>
         </div>
 
         {/* Carousel */}
         <div
-          className="flex gap-2 sm:gap-2.5 overflow-x-auto pb-1.5 scrollbar-thin scroll-smooth w-full"
+          className="flex gap-3 sm:gap-3.5 overflow-x-auto pb-2 pt-1 scrollbar-thin scroll-smooth w-full"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
           {hourly.map((hour, i) => {
@@ -56,35 +56,35 @@ export default function HourlyForecast({ weather }) {
             return (
               <div
                 key={hour.time}
-                className={`flex-shrink-0 text-center py-3 px-3 rounded-xl min-w-[64px] sm:min-w-[70px] transition-all select-none border ${
+                className={`flex-shrink-0 text-center py-4 px-3.5 rounded-2xl min-w-[80px] sm:min-w-[88px] transition-all select-none border shadow-2xs ${
                   i === 0
-                    ? 'bg-teal-50/80 border-teal-600/60 shadow-2xs'
+                    ? 'bg-teal-50/90 border-teal-600/60'
                     : 'bg-slate-50 border-slate-200 hover:border-slate-300'
                 }`}
               >
                 {/* Time */}
-                <p className={`text-[11px] font-bold mb-2 ${i === 0 ? 'text-teal-800' : 'text-slate-500'}`}>
+                <p className={`text-xs font-bold mb-2.5 ${i === 0 ? 'text-teal-800' : 'text-slate-500'}`}>
                   {timeLabel}
                 </p>
 
                 {/* Weather Icon */}
-                <div className={`flex justify-center mb-2 ${i === 0 ? 'text-teal-700' : 'text-slate-600'}`}>
-                  <WeatherIcon size={20} />
+                <div className={`flex justify-center mb-2.5 ${i === 0 ? 'text-teal-700' : 'text-slate-600'}`}>
+                  <WeatherIcon size={22} />
                 </div>
 
                 {/* Temperature */}
-                <p className="text-sm font-bold text-slate-900 mb-1">
+                <p className="text-base font-extrabold text-slate-900 mb-1.5 leading-none">
                   {Math.round(hour.temperature)}°
                 </p>
 
                 {/* Rain probability */}
                 {hour.rain_probability > 0 ? (
-                  <div className="flex items-center justify-center gap-0.5 text-[10px] text-sky-700 font-semibold">
-                    <Droplets size={10} className="text-sky-600" />
+                  <div className="flex items-center justify-center gap-1 text-[11px] text-sky-700 font-bold">
+                    <Droplets size={11} className="text-sky-600 flex-shrink-0" />
                     <span>{hour.rain_probability}%</span>
                   </div>
                 ) : (
-                  <div className="h-[15px]" />
+                  <div className="h-[17px]" />
                 )}
               </div>
             );

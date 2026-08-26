@@ -18,9 +18,9 @@ import { formatHour } from '../utils/weatherUtils';
 function CustomTooltip({ active, payload, label, unit, color }) {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white border border-slate-200 rounded-lg p-2.5 shadow-md text-xs">
-        <p className="text-slate-500 font-medium mb-0.5">{label}</p>
-        <p className="font-bold flex items-center gap-1" style={{ color }}>
+      <div className="bg-white border border-slate-200 rounded-xl p-3 shadow-lg text-xs">
+        <p className="text-slate-500 font-medium mb-1">{label}</p>
+        <p className="font-bold text-sm flex items-center gap-1" style={{ color }}>
           <span>{payload[0].value} {unit}</span>
         </p>
       </div>
@@ -37,7 +37,6 @@ export default function WeatherChart({ weather, airQuality }) {
   const currentAqi = airQuality?.aqi ?? 35;
 
   const chartData = weather.hourly.slice(0, 24).map((h, i) => {
-    // Computed hourly AQI variation
     const aqiVar = Math.max(10, Math.round(currentAqi + Math.sin(i / 3) * 8));
     return {
       time: i === 0 ? 'Now' : formatHour(h.time),
@@ -48,44 +47,44 @@ export default function WeatherChart({ weather, airQuality }) {
   });
 
   return (
-    <div className="panel-card p-5 sm:p-6 bg-white border border-slate-200 w-full">
+    <div className="panel-card p-6 sm:p-8 lg:p-9 bg-white border border-slate-200 w-full">
       {/* Header & Tab Selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-2 border-b border-slate-100">
-        <div className="flex items-center gap-2">
-          <TrendingUp size={16} className="text-teal-700" />
-          <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 mb-5 pb-3 border-b border-slate-100">
+        <div className="flex items-center gap-2.5">
+          <TrendingUp size={18} className="text-teal-700" />
+          <h3 className="text-xs sm:text-sm font-bold text-slate-800 uppercase tracking-wider">
             24h Telemetry Analytics
           </h3>
         </div>
 
         {/* Tab Controls */}
-        <div className="inline-flex p-1 rounded-lg bg-slate-100 border border-slate-200 text-xs self-start sm:self-auto">
+        <div className="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs self-start sm:self-auto shadow-2xs">
           <button
             onClick={() => setActiveTab('temp')}
-            className={`px-3 py-1 rounded-md font-semibold transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
               activeTab === 'temp'
-                ? 'bg-white text-slate-900 shadow-2xs'
-                : 'text-slate-500 hover:text-slate-900'
+                ? 'bg-white text-slate-900 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Temperature (°C)
           </button>
           <button
             onClick={() => setActiveTab('rain')}
-            className={`px-3 py-1 rounded-md font-semibold transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
               activeTab === 'rain'
-                ? 'bg-white text-slate-900 shadow-2xs'
-                : 'text-slate-500 hover:text-slate-900'
+                ? 'bg-white text-slate-900 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Rain Probability (%)
           </button>
           <button
             onClick={() => setActiveTab('aqi')}
-            className={`px-3 py-1 rounded-md font-semibold transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
               activeTab === 'aqi'
-                ? 'bg-white text-slate-900 shadow-2xs'
-                : 'text-slate-500 hover:text-slate-900'
+                ? 'bg-white text-slate-900 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             AQI Trend
@@ -94,21 +93,21 @@ export default function WeatherChart({ weather, airQuality }) {
       </div>
 
       {/* Chart Canvas */}
-      <div className="w-full h-48 sm:h-56">
+      <div className="w-full h-52 sm:h-60 pt-2">
         <ResponsiveContainer width="100%" height="100%">
           {activeTab === 'temp' ? (
             <AreaChart data={chartData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
               <XAxis
                 dataKey="time"
-                tick={{ fill: '#64748b', fontSize: 10 }}
+                tick={{ fill: '#64748b', fontSize: 11 }}
                 tickLine={false}
                 axisLine={{ stroke: '#e2e8f0' }}
                 interval="preserveStartEnd"
                 minTickGap={24}
               />
               <YAxis
-                tick={{ fill: '#64748b', fontSize: 10 }}
+                tick={{ fill: '#64748b', fontSize: 11 }}
                 tickLine={false}
                 axisLine={false}
                 tickFormatter={(v) => `${v}°`}
@@ -119,10 +118,10 @@ export default function WeatherChart({ weather, airQuality }) {
                 type="monotone"
                 dataKey="temperature"
                 stroke="#0f766e"
-                strokeWidth={2}
+                strokeWidth={2.5}
                 fill="#f0fdfa"
                 dot={false}
-                activeDot={{ r: 4, fill: '#0f766e', strokeWidth: 0 }}
+                activeDot={{ r: 5, fill: '#0f766e', strokeWidth: 0 }}
               />
             </AreaChart>
           ) : activeTab === 'rain' ? (
@@ -130,14 +129,14 @@ export default function WeatherChart({ weather, airQuality }) {
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
               <XAxis
                 dataKey="time"
-                tick={{ fill: '#64748b', fontSize: 10 }}
+                tick={{ fill: '#64748b', fontSize: 11 }}
                 tickLine={false}
                 axisLine={{ stroke: '#e2e8f0' }}
                 interval="preserveStartEnd"
                 minTickGap={24}
               />
               <YAxis
-                tick={{ fill: '#64748b', fontSize: 10 }}
+                tick={{ fill: '#64748b', fontSize: 11 }}
                 tickLine={false}
                 axisLine={false}
                 domain={[0, 100]}
@@ -147,7 +146,7 @@ export default function WeatherChart({ weather, airQuality }) {
               <Bar
                 dataKey="rain"
                 fill="#0284c7"
-                radius={[3, 3, 0, 0]}
+                radius={[4, 4, 0, 0]}
               />
             </BarChart>
           ) : (
@@ -155,14 +154,14 @@ export default function WeatherChart({ weather, airQuality }) {
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
               <XAxis
                 dataKey="time"
-                tick={{ fill: '#64748b', fontSize: 10 }}
+                tick={{ fill: '#64748b', fontSize: 11 }}
                 tickLine={false}
                 axisLine={{ stroke: '#e2e8f0' }}
                 interval="preserveStartEnd"
                 minTickGap={24}
               />
               <YAxis
-                tick={{ fill: '#64748b', fontSize: 10 }}
+                tick={{ fill: '#64748b', fontSize: 11 }}
                 tickLine={false}
                 axisLine={false}
                 domain={[0, 'auto']}
@@ -173,9 +172,9 @@ export default function WeatherChart({ weather, airQuality }) {
                 type="monotone"
                 dataKey="aqi"
                 stroke="#d97706"
-                strokeWidth={2}
+                strokeWidth={2.5}
                 dot={false}
-                activeDot={{ r: 4, fill: '#d97706', strokeWidth: 0 }}
+                activeDot={{ r: 5, fill: '#d97706', strokeWidth: 0 }}
               />
             </LineChart>
           )}

@@ -1,11 +1,11 @@
 /**
  * Dashboard.jsx — Environmental Decision Intelligence Platform (SIH 2024 Edition).
  *
- * Resilient Data Fetching Lifecycle:
- * - Uses Promise.allSettled to prevent single endpoint failures from crashing the UI
- * - Displays cached/stale data seamlessly with a subtle non-blocking notice
- * - Prevents empty/blank screens during upstream rate limits
- * - Aborts stale in-flight requests on rapid station changes
+ * Professional UI with uncompressed, generous layout spacing:
+ * - 8px consistent spacing system with responsive page padding
+ * - Clean multi-column grids and balanced vertical hierarchy
+ * - Non-blocking cached telemetry notice
+ * - Resilient Promise.allSettled lifecycle
  */
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -33,7 +33,7 @@ import {
   saveLocation,
   deleteSavedLocation,
 } from '../services/weatherApi';
-import { RefreshCw, AlertTriangle, Clock, Info } from 'lucide-react';
+import { RefreshCw, AlertTriangle, Clock } from 'lucide-react';
 
 const DEFAULT_LOCATION = {
   name: 'Hyderabad',
@@ -75,7 +75,6 @@ export default function Dashboard({ onOpenSettings }) {
   // ── Primary Coordinated Data Fetching with Resilient Fallbacks ──
   const fetchAll = useCallback(
     async (loc = location, targetProfile = profile) => {
-      // Abort previous in-flight requests if location changed rapidly
       if (activeAbortRef.current) {
         activeAbortRef.current.abort();
       }
@@ -100,7 +99,6 @@ export default function Dashboard({ onOpenSettings }) {
           setWeather(weatherRes.value);
           setError(null);
         } else if (!weather) {
-          // Weather failed and no previous weather data exists
           const err = weatherRes.reason;
           if (err?.name !== 'CanceledError' && err?.name !== 'AbortError') {
             setError(err?.message || 'Weather telemetry is temporarily unavailable. Please retry in a few moments.');
@@ -111,7 +109,6 @@ export default function Dashboard({ onOpenSettings }) {
         if (aqRes.status === 'fulfilled' && aqRes.value) {
           setAirQuality(aqRes.value);
         } else if (!airQuality) {
-          // Provide neutral air quality telemetry fallback
           setAirQuality({
             location: loc.name,
             latitude: loc.latitude,
@@ -138,7 +135,6 @@ export default function Dashboard({ onOpenSettings }) {
         if (recRes.status === 'fulfilled' && recRes.value) {
           setRecommendation(recRes.value);
         } else if (!recommendation && weatherRes.status === 'fulfilled') {
-          // Construct basic baseline advisory
           setRecommendation({
             profile: targetProfile,
             profile_label: 'Health-Conscious Individuals',
@@ -216,7 +212,7 @@ export default function Dashboard({ onOpenSettings }) {
         const locs = await getSavedLocations(sessionId);
         if (mounted && locs) setSavedLocations(locs);
       } catch {
-        // Non-critical background telemetry load
+        // Non-critical background load
       }
     };
     loadSaved();
@@ -305,7 +301,7 @@ export default function Dashboard({ onOpenSettings }) {
   // ── Render ────────────────────────────────────────────
   return (
     <div className="app-shell">
-      {/* Top Header */}
+      {/* Top Navigation Header */}
       <Header
         location={location}
         onSelectLocation={handleSelectLocation}
@@ -314,32 +310,34 @@ export default function Dashboard({ onOpenSettings }) {
         onOpenSettings={onOpenSettings}
       />
 
-      {/* Main Content Flow */}
-      <main className="dashboard-container py-5 sm:py-6 pb-20 space-y-5 sm:space-y-6">
+      {/* Main Content Stream with Generous Section Spacing */}
+      <main className="dashboard-container py-6 sm:py-8 lg:py-10 pb-24 space-y-6 sm:space-y-8 lg:space-y-9">
         {/* Geolocation Alert Banner */}
         {locationError && (
-          <div className="flex items-center gap-3 p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs sm:text-sm fade-in">
-            <AlertTriangle size={16} className="text-amber-600 flex-shrink-0" />
-            <p className="flex-1 font-medium">{locationError}</p>
+          <div className="flex items-center gap-3 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-950 text-xs sm:text-sm fade-in shadow-2xs">
+            <AlertTriangle size={18} className="text-amber-600 flex-shrink-0" />
+            <p className="flex-1 font-semibold">{locationError}</p>
             <button
               onClick={() => setLocationError(null)}
-              className="text-amber-700 hover:text-amber-900 px-2 py-0.5 text-lg leading-none cursor-pointer"
+              className="text-amber-700 hover:text-amber-950 px-2 py-0.5 text-lg leading-none cursor-pointer"
             >
               ×
             </button>
           </div>
         )}
 
-        {/* Non-Blocking Cached / Stale Data Notice */}
+        {/* Non-Blocking Cached Data Notice */}
         {isStaleData && weather && (
-          <div className="flex items-center justify-between gap-3 p-3 rounded-xl bg-amber-50/90 border border-amber-200 text-amber-900 text-xs fade-in">
-            <div className="flex items-center gap-2">
-              <Clock size={14} className="text-amber-700 flex-shrink-0" />
-              <span>Showing recently cached weather data. Live provider is temporarily busy.</span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:p-4 px-4 sm:px-5 rounded-2xl bg-amber-50/95 border border-amber-200 text-amber-950 text-xs sm:text-sm fade-in shadow-2xs">
+            <div className="flex items-center gap-2.5">
+              <Clock size={16} className="text-amber-700 flex-shrink-0" />
+              <span className="font-medium">
+                Showing recently cached weather data. Live provider is temporarily busy.
+              </span>
             </div>
             <button
               onClick={() => fetchAll(location, profile)}
-              className="font-bold underline text-amber-800 hover:text-amber-950 flex-shrink-0 cursor-pointer text-[11px]"
+              className="font-bold underline text-amber-800 hover:text-amber-950 flex-shrink-0 cursor-pointer text-xs self-start sm:self-auto"
             >
               Retry Live Sync
             </button>
@@ -352,7 +350,7 @@ export default function Dashboard({ onOpenSettings }) {
         {/* Loading Skeleton */}
         {loading && !weather && <LoadingState />}
 
-        {/* Error Fallback when completely no data is available */}
+        {/* Error Fallback (Only when no data is available) */}
         {error && !loading && !weather && (
           <ErrorState
             message={error}
@@ -365,21 +363,21 @@ export default function Dashboard({ onOpenSettings }) {
         {weather && (
           <>
             {/* Live Telemetry Status Bar */}
-            <div className="flex justify-between items-center px-0.5 text-xs text-slate-500">
-              <div className="flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${isStaleData ? 'bg-amber-500' : 'bg-emerald-500 animate-pulse'}`} />
-                <span className="font-semibold text-slate-700">
-                  {isStaleData ? 'Cached Telemetry' : 'Live Station Feed'}
+            <div className="flex justify-between items-center px-1 text-xs text-slate-500">
+              <div className="flex items-center gap-2.5">
+                <span className={`w-2.5 h-2.5 rounded-full ${isStaleData ? 'bg-amber-500' : 'bg-emerald-500 animate-pulse'}`} />
+                <span className="font-bold text-slate-800">
+                  {isStaleData ? 'Cached Telemetry' : 'Live Station Telemetry'}
                 </span>
                 <span className="hidden sm:inline text-slate-400">
                   {lastRefresh && `• Synchronized ${lastRefresh.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`}
                 </span>
               </div>
               <button
-                className="btn-ghost !py-1 !px-2.5 text-xs font-semibold rounded-lg flex items-center gap-1.5"
+                className="btn-ghost !py-1.5 !px-3 text-xs font-semibold rounded-lg flex items-center gap-2"
                 onClick={() => fetchAll(location, profile)}
               >
-                <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
+                <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
                 <span>{isStaleData ? 'Retry Live Sync' : 'Sync Now'}</span>
               </button>
             </div>
@@ -409,14 +407,14 @@ export default function Dashboard({ onOpenSettings }) {
             <HourlyForecast weather={weather} />
 
             {/* 7. Two-Column Analytical Grid: 7-Day Tabular Forecast & (AQI + Charts) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 xl:gap-10 items-start">
               {/* Left Column: 7-Day Environmental Forecast Table (lg:col-span-6) */}
               <div className="lg:col-span-6 flex flex-col h-full">
                 <Forecast weather={weather} airQuality={airQuality} />
               </div>
 
               {/* Right Column: Air Quality Pollution Breakdown & 24h Trend Charts (lg:col-span-6) */}
-              <div className="lg:col-span-6 flex flex-col gap-5 sm:gap-6">
+              <div className="lg:col-span-6 flex flex-col gap-6 lg:gap-8">
                 <AQICard airQuality={airQuality} />
                 <WeatherChart weather={weather} airQuality={airQuality} />
               </div>

@@ -23,7 +23,7 @@
   --color-warning: #d97706;       /* Amber 600 */
   --color-danger: #dc2626;        /* Red 600 */
 
-  --radius-card: 16px;
+  --radius-card: 18px;
   --radius-button: 10px;
   --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
   --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
@@ -70,7 +70,7 @@ body {
 }
 
 /* ─────────────────────────────────────────────
-   Layout Containers
+   Layout Containers & Spacing System
 ───────────────────────────────────────────── */
 .app-shell {
   width: 100%;
@@ -82,19 +82,27 @@ body {
 }
 
 .dashboard-container {
-  width: min(100% - 24px, 1440px);
+  width: 100%;
+  max-width: 1380px;
   margin-inline: auto;
+  padding-inline: 16px;
 }
 
 @media (min-width: 640px) {
   .dashboard-container {
-    width: min(100% - 40px, 1440px);
+    padding-inline: 24px;
   }
 }
 
 @media (min-width: 1024px) {
   .dashboard-container {
-    width: min(100% - 48px, 1440px);
+    padding-inline: 32px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .dashboard-container {
+    padding-inline: 40px;
   }
 }
 
