@@ -9,11 +9,25 @@ import type {
   SavedLocation,
 } from '../types/weather';
 
-const API_BASE = (import.meta.env.VITE_API_URL as string) || '/api';
+// Normalize API Base URL so it works whether VITE_API_URL is:
+// - undefined (defaults to '/api' for local Vite proxy / Vercel rewrites)
+// - "https://weatherwise-vr0t.onrender.com"
+// - "https://weatherwise-vr0t.onrender.com/"
+// - "https://weatherwise-vr0t.onrender.com/api"
+const resolveApiBase = (): string => {
+  const envUrl = (import.meta.env.VITE_API_URL as string)?.trim();
+  if (!envUrl) {
+    return '/api';
+  }
+  const clean = envUrl.replace(/\/+$/, '');
+  return clean.endsWith('/api') ? clean : `${clean}/api`;
+};
+
+const API_BASE = resolveApiBase();
 
 const api = axios.create({
   baseURL: API_BASE,
-  timeout: 12000,
+  timeout: 45000, // 45s timeout to handle Render free-tier cold starts
 });
 
 export const fetchWeather = async (

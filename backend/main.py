@@ -104,16 +104,60 @@ async def health_check():
     }
 
 
-@app.get("/", tags=["System"])
-async def root():
-    """Root endpoint — redirect users to the API docs and health endpoint."""
-    return {
-        "message": "Welcome to WeatherWise Environmental Intelligence API!",
-        "docs": "https://weatherwise-vr0t.onrender.com/docs",
-        "health": "https://weatherwise-vr0t.onrender.com/health",
-        "api_health": "https://weatherwise-vr0t.onrender.com/api/health",
-        "status": "online",
-    }
+from pathlib import Path
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from fastapi import HTTPException
+
+# ─────────────────────────────────────────────
+# Static Frontend Serving Configuration
+# ─────────────────────────────────────────────
+BASE_DIR = Path(__file__).resolve().parent
+STATIC_CANDIDATES = [
+    BASE_DIR / "static",
+    BASE_DIR.parent / "frontend" / "dist",
+    BASE_DIR / "frontend" / "dist",
+]
+
+STATIC_DIR = None
+for candidate in STATIC_CANDIDATES:
+    if (candidate / "index.html").exists():
+        STATIC_DIR = candidate
+        break
+
+if STATIC_DIR:
+    assets_path = STATIC_DIR / "assets"
+    if assets_path.exists():
+        app.mount("/assets", StaticFiles(directory=str(assets_path)), name="assets")
+
+    @app.get("/", tags=["Frontend"])
+    async def serve_root():
+        """Serve the React frontend single page application."""
+        return FileResponse(str(STATIC_DIR / "index.html"))
+
+    @app.get("/{full_path:path}", tags=["Frontend"])
+    async def serve_spa_catchall(full_path: str):
+        """Serve frontend static files or fallback to index.html for SPA client-side routing."""
+        # Do not catch API or documentation paths
+        if full_path.startswith(("api", "docs", "redoc", "openapi.json", "health", "ping", "livez")):
+            raise HTTPException(status_code=404, detail="Not Found")
+
+        file_path = STATIC_DIR / full_path
+        if full_path and file_path.is_file():
+            return FileResponse(str(file_path))
+
+        return FileResponse(str(STATIC_DIR / "index.html"))
+else:
+    @app.get("/", tags=["System"])
+    async def root():
+        """Root endpoint fallback when static frontend is not present."""
+        return {
+            "message": "Welcome to WeatherWise Environmental Intelligence API!",
+            "docs": "/docs",
+            "health": "/health",
+            "api_health": "/api/health",
+            "status": "online",
+        }
 
 
 if __name__ == "__main__":
