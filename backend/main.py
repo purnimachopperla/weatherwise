@@ -8,6 +8,8 @@ API Documentation (auto-generated): http://localhost:8000/docs
 """
 
 import os
+import time
+from datetime import datetime, timezone
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
@@ -43,8 +45,6 @@ app = FastAPI(
 
 # ─────────────────────────────────────────────
 # CORS Configuration
-# Allows requests from local development (ports 5173, 5174)
-# and deployed frontend URLs (Vercel, custom domain).
 # ─────────────────────────────────────────────
 default_origins = [
     "http://localhost:5173",
@@ -57,7 +57,6 @@ cors_env = os.getenv("CORS_ORIGINS") or os.getenv("FRONTEND_URL") or ""
 custom_origins = [o.strip().rstrip("/") for o in cors_env.split(",") if o.strip()]
 allowed_origins = list(set(default_origins + custom_origins))
 
-# If "*" is specified in environment
 if "*" in allowed_origins or cors_env.strip() == "*":
     allowed_origins = ["*"]
 
@@ -79,31 +78,41 @@ app.include_router(air_quality_router)
 app.include_router(recommendations_router)
 app.include_router(locations_router)
 
+SERVER_START_TIME = time.time()
+
 
 # ─────────────────────────────────────────────
-# Health Check Endpoint
+# Health Check & Keep-Alive Endpoints (For cron-job.org / Render)
 # ─────────────────────────────────────────────
 @app.get("/api/health", tags=["System"])
+@app.get("/health", tags=["System"])
+@app.get("/ping", tags=["System"])
+@app.get("/livez", tags=["System"])
 async def health_check():
     """
-    Simple health check endpoint.
-    Returns status 200 if the server is running correctly.
-    Use this to verify the backend is alive before testing other endpoints.
+    Health check endpoint for Render keep-alive and uptime monitoring.
+    Target this endpoint with https://cron-job.org every 5-10 minutes
+    to prevent Render from spinning down on free tier.
     """
+    uptime_seconds = round(time.time() - SERVER_START_TIME, 1)
     return {
         "status": "healthy",
-        "message": "WeatherWise API is running!",
+        "message": "WeatherWise API is running and ready!",
         "version": "1.0.0",
+        "uptime_seconds": uptime_seconds,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
 
 @app.get("/", tags=["System"])
 async def root():
-    """Root endpoint — redirect users to the API docs."""
+    """Root endpoint — redirect users to the API docs and health endpoint."""
     return {
-        "message": "Welcome to WeatherWise API!",
-        "docs": "http://localhost:8000/docs",
-        "health": "http://localhost:8000/api/health",
+        "message": "Welcome to WeatherWise Environmental Intelligence API!",
+        "docs": "https://weatherwise-vr0t.onrender.com/docs",
+        "health": "https://weatherwise-vr0t.onrender.com/health",
+        "api_health": "https://weatherwise-vr0t.onrender.com/api/health",
+        "status": "online",
     }
 
 
@@ -112,4 +121,3 @@ if __name__ == "__main__":
 
     port = int(os.getenv("PORT", 8000))
     uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)
-

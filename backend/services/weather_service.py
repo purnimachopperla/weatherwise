@@ -26,6 +26,12 @@ logger = logging.getLogger("weatherwise.weather_service")
 BASE_URL = os.getenv("OPEN_METEO_BASE_URL", "https://api.open-meteo.com/v1")
 GEOCODING_URL = os.getenv("OPEN_METEO_GEOCODING_URL", "https://geocoding-api.open-meteo.com/v1")
 
+HTTP_HEADERS = {
+    "User-Agent": "WeatherWise-Environmental-Platform/1.0 (https://weatherwise.vercel.app; contact@weatherwise.app)",
+    "Accept": "application/json",
+    "Accept-Encoding": "gzip, deflate",
+}
+
 
 async def _fetch_weather_upstream(lat: float, lon: float, location_name: str) -> dict:
     """Make the raw HTTP request to Open-Meteo with exponential backoff for transient errors."""
@@ -70,7 +76,7 @@ async def _fetch_weather_upstream(lat: float, lon: float, location_name: str) ->
     max_retries = 2
     for attempt in range(max_retries + 1):
         try:
-            async with httpx.AsyncClient(timeout=12.0) as client:
+            async with httpx.AsyncClient(timeout=12.0, headers=HTTP_HEADERS) as client:
                 response = await client.get(url, params=params)
 
                 if response.status_code == 429:
@@ -168,7 +174,7 @@ async def _fetch_weather_upstream(lat: float, lon: float, location_name: str) ->
         sunset_str = daily["sunset"][i] if daily.get("sunset") else ""
         try:
             sunrise_fmt = datetime.fromisoformat(sunrise_str).strftime("%I:%M %p") if sunrise_str else "N/A"
-            sunset_fmt = datetime.fromisoformat(sunset_str).strftime("%I:%M %p") if sunset_str else "N/A"
+            sunset_fmt = datetime.fromisoformat(sunset_str).strftime("%I:%M %p") if sunrise_str else "N/A"
         except Exception:
             sunrise_fmt = sunrise_str
             sunset_fmt = sunset_str
@@ -228,7 +234,7 @@ async def search_locations(query: str) -> list:
             "format": "json",
         }
         logger.info(f"[UPSTREAM REQUEST] GET {GEOCODING_URL}/search (query={query})")
-        async with httpx.AsyncClient(timeout=10.0) as client:
+        async with httpx.AsyncClient(timeout=10.0, headers=HTTP_HEADERS) as client:
             response = await client.get(f"{GEOCODING_URL}/search", params=params)
             if response.status_code == 429:
                 logger.error(f"[UPSTREAM 429] Geocoding rate limited for query={query}")
@@ -264,7 +270,7 @@ async def reverse_geocode(lat: float, lon: float) -> dict:
     async def _fetch():
         try:
             logger.info(f"[UPSTREAM REQUEST] Reverse geocode ({lat}, {lon})")
-            async with httpx.AsyncClient(timeout=8.0, headers={"User-Agent": "WeatherWise/1.0"}) as client:
+            async with httpx.AsyncClient(timeout=8.0, headers=HTTP_HEADERS) as client:
                 resp = await client.get(
                     "https://nominatim.openstreetmap.org/reverse",
                     params={"lat": lat, "lon": lon, "format": "json"},

@@ -20,6 +20,12 @@ logger = logging.getLogger("weatherwise.air_quality")
 
 AQ_URL = os.getenv("OPEN_METEO_AIR_QUALITY_URL", "https://air-quality-api.open-meteo.com/v1")
 
+HTTP_HEADERS = {
+    "User-Agent": "WeatherWise-Environmental-Platform/1.0 (https://weatherwise.vercel.app; contact@weatherwise.app)",
+    "Accept": "application/json",
+    "Accept-Encoding": "gzip, deflate",
+}
+
 
 async def _fetch_air_quality_upstream(lat: float, lon: float, location_name: str) -> dict:
     """Make raw HTTP request to Open-Meteo Air Quality API."""
@@ -49,7 +55,7 @@ async def _fetch_air_quality_upstream(lat: float, lon: float, location_name: str
     max_retries = 2
     for attempt in range(max_retries + 1):
         try:
-            async with httpx.AsyncClient(timeout=12.0) as client:
+            async with httpx.AsyncClient(timeout=12.0, headers=HTTP_HEADERS) as client:
                 response = await client.get(url, params=params)
 
                 if response.status_code == 429:
@@ -97,7 +103,6 @@ async def _fetch_air_quality_upstream(lat: float, lon: float, location_name: str
 
     current = data.get("current", {})
 
-    # European AQI ranges from 0 to 100+ (higher = worse)
     aqi_value = current.get("european_aqi")
     category, color = get_aqi_category(aqi_value)
 
