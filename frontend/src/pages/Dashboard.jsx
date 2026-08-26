@@ -1,45 +1,65 @@
 /**
- * Dashboard.jsx — The main page of WeatherWise.
+ * Dashboard.jsx — Redesigned Modern WeatherWise Application Experience.
  *
- * Orchestrates all components and manages application state.
- * Fully responsive: adapts layout smoothly from 320px mobile to 1920px widescreen.
+ * Visual hierarchy:
+ * 1. Clean sticky top header with search & settings
+ * 2. Lifestyle persona horizontal selection strip
+ * 3. Hero Current Weather Section (Main focal point)
+ * 4. 6-metric responsive weather stats bar
+ * 5. Full-width Personalized Lifestyle Guidance section
+ * 6. 24-hour horizontal forecast carousel
+ * 7. Two-column split layout:
+ *    - Left: 7-Day daily forecast with temperature range bars
+ *    - Right: Air Quality gauge & 24h interactive trends
+ * 8. Quick-switch saved locations strip
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import { RefreshCw, AlertTriangle } from 'lucide-react';
-
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import Header from '../components/Header';
 import ProfileSelector from '../components/ProfileSelector';
 import CurrentWeather from '../components/CurrentWeather';
 import WeatherStats from '../components/WeatherStats';
-import AQICard from '../components/AQICard';
 import HourlyForecast from '../components/HourlyForecast';
 import Forecast from '../components/Forecast';
-import WeatherAlerts from '../components/WeatherAlerts';
 import RecommendationCard from '../components/RecommendationCard';
+import AQICard from '../components/AQICard';
 import WeatherChart from '../components/WeatherChart';
+import WeatherAlerts from '../components/WeatherAlerts';
 import SavedLocations from '../components/SavedLocations';
 import LoadingState from '../components/LoadingState';
 import ErrorState from '../components/ErrorState';
 
-import { useRecommendation } from '../hooks/useWeather';
 import {
-  fetchWeather, fetchAirQuality, fetchAlerts,
-  getSavedLocations, saveLocation, deleteSavedLocation,
+  fetchWeather,
+  fetchAirQuality,
+  fetchAlerts,
   reverseGeocode,
+  getSavedLocations,
+  saveLocation,
+  deleteSavedLocation,
 } from '../services/weatherApi';
-import { getOrCreateSessionId } from '../utils/weatherUtils';
+import { useRecommendation } from '../hooks/useWeather';
+import { RefreshCw, AlertTriangle } from 'lucide-react';
 
-
-// Default starting location
 const DEFAULT_LOCATION = {
   name: 'Hyderabad',
   country: 'India',
-  latitude: 17.385,
+  latitude: 17.3850,
   longitude: 78.4867,
 };
 
+function getOrCreateSessionId() {
+  let id = localStorage.getItem('weatherwise_session_id');
+  if (!id) {
+    id = 'session_' + Math.random().toString(36).substring(2, 11) + '_' + Date.now();
+    localStorage.setItem('weatherwise_session_id', id);
+  }
+  return id;
+}
+
 export default function Dashboard({ onOpenSettings }) {
+  const sessionId = useMemo(() => getOrCreateSessionId(), []);
+
   // ── State ──────────────────────────────────────────────
   const [location, setLocation] = useState(DEFAULT_LOCATION);
   const [profile, setProfile] = useState('health');
@@ -53,56 +73,54 @@ export default function Dashboard({ onOpenSettings }) {
   const [detecting, setDetecting] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(null);
 
-  const sessionId = getOrCreateSessionId();
-
-  // Recommendation updates separately when profile changes
   const {
     recommendation,
     loading: recLoading,
+    fetchRec,
   } = useRecommendation(location.latitude, location.longitude, location.name, profile);
 
-  // ── Fetch all weather data ────────────────────────────
-  const fetchAll = useCallback(async (loc = location) => {
-    if (!loc?.latitude || !loc?.longitude) return;
-    setLoading(true);
-    setError(null);
+  // ── Data Fetching ──────────────────────────────────────
+  const fetchAll = useCallback(
+    async (loc = location) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const [w, aq, al] = await Promise.all([
+          fetchWeather(loc.latitude, loc.longitude, loc.name),
+          fetchAirQuality(loc.latitude, loc.longitude, loc.name),
+          fetchAlerts(loc.latitude, loc.longitude, loc.name),
+        ]);
+        setWeather(w);
+        setAirQuality(aq);
+        setAlerts(al);
+        setLastRefresh(new Date());
+      } catch (err) {
+        setError(err.message || 'Failed to load weather data. Please check connection.');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [location]
+  );
 
-    try {
-      const [w, aq, al] = await Promise.all([
-        fetchWeather(loc.latitude, loc.longitude, loc.name),
-        fetchAirQuality(loc.latitude, loc.longitude, loc.name),
-        fetchAlerts(loc.latitude, loc.longitude, loc.name),
-      ]);
-      setWeather(w);
-      setAirQuality(aq);
-      setAlerts(al);
-      setLastRefresh(new Date());
-    } catch (err) {
-      setError(err.message || 'Failed to load weather data. Please check connection.');
-    } finally {
-      setLoading(false);
-    }
-  }, [location]);
-
-  // Fetch when location changes
   useEffect(() => {
     fetchAll(location);
-  }, [location.latitude, location.longitude]);
+  }, [location.latitude, location.longitude]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Load saved locations on mount ─────────────────────
   useEffect(() => {
     const loadSaved = async () => {
       try {
         const locs = await getSavedLocations(sessionId);
-        setSavedLocations(locs);
+        if (locs) setSavedLocations(locs);
       } catch {
-        // Silently ignore — non-critical
+        // Non-critical background load
       }
     };
     loadSaved();
   }, [sessionId]);
 
-  // ── Location handlers ─────────────────────────────────
+  // ── Location Selection ─────────────────────────────────
   const handleSelectLocation = (loc) => {
     setLocation({
       name: loc.name,
@@ -110,8 +128,10 @@ export default function Dashboard({ onOpenSettings }) {
       latitude: loc.latitude,
       longitude: loc.longitude,
     });
+    setLocationError(null);
   };
 
+  // ── Geolocation Detection ──────────────────────────────
   const handleDetectLocation = async () => {
     if (!navigator.geolocation) {
       setLocationError('Geolocation is not supported by your browser.');
@@ -130,14 +150,14 @@ export default function Dashboard({ onOpenSettings }) {
 
       const { latitude, longitude } = position.coords;
 
-      // Reverse geocode
       let name = 'Your Location', country = '';
       try {
         const data = await reverseGeocode(latitude, longitude);
         name = data.name || name;
         country = data.country || country;
-      } catch {}
-
+      } catch {
+        // Non-critical reverse geocode fallback
+      }
 
       setLocation({ name, country, latitude, longitude });
     } catch (err) {
@@ -152,7 +172,7 @@ export default function Dashboard({ onOpenSettings }) {
     }
   };
 
-  // ── Saved Location handlers ───────────────────────────
+  // ── Saved Locations Management ─────────────────────────
   const handleSaveCurrentLocation = async () => {
     try {
       await saveLocation({
@@ -163,7 +183,7 @@ export default function Dashboard({ onOpenSettings }) {
         longitude: location.longitude,
       });
       const locs = await getSavedLocations(sessionId);
-      setSavedLocations(locs);
+      if (locs) setSavedLocations(locs);
     } catch (err) {
       console.error('Failed to save location:', err);
     }
@@ -178,7 +198,7 @@ export default function Dashboard({ onOpenSettings }) {
     }
   };
 
-  // ── Profile change ────────────────────────────────────
+  // ── Profile Change ─────────────────────────────────────
   const handleProfileChange = (newProfile) => {
     setProfile(newProfile);
   };
@@ -189,9 +209,8 @@ export default function Dashboard({ onOpenSettings }) {
       {/* Background ambient orbs */}
       <div className="bg-orb bg-orb-1" />
       <div className="bg-orb bg-orb-2" />
-      <div className="bg-orb bg-orb-3" />
 
-      {/* Header */}
+      {/* Sticky Header */}
       <Header
         location={location}
         onSelectLocation={handleSelectLocation}
@@ -200,31 +219,29 @@ export default function Dashboard({ onOpenSettings }) {
         onOpenSettings={onOpenSettings}
       />
 
-      {/* Main content container */}
-      <main className="w-full max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 py-3.5 sm:py-6 pb-16 sm:pb-20">
-        {/* Location detection error banner */}
+      {/* Main content stream */}
+      <main className="w-full max-w-[1280px] mx-auto px-3.5 sm:px-6 lg:px-8 py-5 sm:py-7 pb-20 space-y-6 sm:space-y-7">
+        {/* Geolocation error banner */}
         {locationError && (
-          <div className="flex items-center gap-3 p-3 sm:p-3.5 mb-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs sm:text-sm">
+          <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs sm:text-sm fade-in">
             <AlertTriangle size={16} className="text-amber-400 flex-shrink-0" />
             <p className="flex-1 text-slate-200">{locationError}</p>
             <button
               onClick={() => setLocationError(null)}
-              className="text-slate-400 hover:text-white px-1.5 py-0.5 text-lg leading-none cursor-pointer"
+              className="text-slate-400 hover:text-white px-2 py-0.5 text-lg leading-none cursor-pointer"
             >
               ×
             </button>
           </div>
         )}
 
-        {/* Profile Selector */}
-        <div className="mb-4 sm:mb-6">
-          <ProfileSelector activeProfile={profile} onProfileChange={handleProfileChange} />
-        </div>
+        {/* 1. Persona Profile Selector Strip */}
+        <ProfileSelector activeProfile={profile} onProfileChange={handleProfileChange} />
 
-        {/* Loading state */}
+        {/* Loading Skeleton */}
         {loading && !weather && <LoadingState />}
 
-        {/* Error state */}
+        {/* Error Fallback */}
         {error && !loading && !weather && (
           <ErrorState
             message={error}
@@ -233,16 +250,16 @@ export default function Dashboard({ onOpenSettings }) {
           />
         )}
 
-        {/* Dashboard content */}
+        {/* Live Weather Content */}
         {weather && (
           <>
-            {/* Last update + Refresh bar */}
-            <div className="flex justify-between items-center mb-3 sm:mb-4">
-              <p className="text-[11px] sm:text-xs text-slate-400 font-medium">
-                {lastRefresh && `Live • Updated ${lastRefresh.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+            {/* Live refresh & timestamp bar */}
+            <div className="flex justify-between items-center px-1">
+              <p className="text-xs text-slate-400 font-medium">
+                {lastRefresh && `Live Weather • Updated ${lastRefresh.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
               </p>
               <button
-                className="btn-ghost !py-1.5 !px-3 text-xs font-semibold rounded-xl flex items-center gap-1.5"
+                className="btn-ghost !py-1 !px-3 text-xs font-semibold rounded-xl flex items-center gap-1.5"
                 onClick={() => fetchAll(location)}
               >
                 <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
@@ -250,51 +267,49 @@ export default function Dashboard({ onOpenSettings }) {
               </button>
             </div>
 
-            {/* ── Responsive Main Grid ── */}
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_420px] gap-4 sm:gap-6 items-start w-full">
-              {/* ─ LEFT COLUMN: Main Weather, Stats, Alerts, Forecasts & Charts ─ */}
-              <div className="flex flex-col gap-4 sm:gap-5 min-w-0">
-                {/* Hero Weather Card */}
-                <CurrentWeather weather={weather} location={location} />
+            {/* 2. Hero Weather Section */}
+            <CurrentWeather weather={weather} location={location} />
 
-                {/* Weather Stats Grid */}
-                <WeatherStats weather={weather} airQuality={airQuality} />
+            {/* 3. Weather Metrics Grid (6 tiles) */}
+            <WeatherStats weather={weather} airQuality={airQuality} />
 
-                {/* Active Alerts (if any) */}
-                {alerts?.alerts?.length > 0 && <WeatherAlerts alerts={alerts} />}
+            {/* 4. Full-Width Personalized Lifestyle Guidance */}
+            <RecommendationCard
+              recommendation={recommendation}
+              loading={recLoading}
+            />
 
-                {/* Hourly Forecast */}
-                <HourlyForecast weather={weather} />
+            {/* 5. Active Weather Warnings (when present) */}
+            {alerts?.alerts?.length > 0 && <WeatherAlerts alerts={alerts} />}
 
-                {/* 7-Day Forecast */}
+            {/* 6. 24-Hour Forecast Carousel */}
+            <HourlyForecast weather={weather} />
+
+            {/* 7. Two-Column Split: 7-Day Forecast & (AQI + Charts) */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 items-stretch">
+              {/* Left Column: 7-Day Forecast */}
+              <div className="flex flex-col">
                 <Forecast weather={weather} />
+              </div>
 
-                {/* Interactive Trends Charts */}
+              {/* Right Column: Air Quality Gauge + 24h Trend Charts */}
+              <div className="flex flex-col gap-5 sm:gap-6">
+                <AQICard airQuality={airQuality} />
                 <WeatherChart weather={weather} />
               </div>
-
-              {/* ─ RIGHT COLUMN: Recommendation, AQI Gauge & Saved Locations ─ */}
-              <div className="flex flex-col gap-4 sm:gap-5 min-w-0">
-                {/* Personalized Recommendation Card */}
-                <RecommendationCard recommendation={recommendation} loading={recLoading} />
-
-                {/* AQI Breakdown */}
-                <AQICard airQuality={airQuality} />
-
-                {/* Saved Locations */}
-                <SavedLocations
-                  savedLocations={savedLocations}
-                  currentLocation={location}
-                  onSelectLocation={handleSelectLocation}
-                  onRemoveLocation={handleRemoveLocation}
-                  onSaveCurrentLocation={handleSaveCurrentLocation}
-                />
-              </div>
             </div>
+
+            {/* 8. Quick-Switch Saved Locations Strip */}
+            <SavedLocations
+              savedLocations={savedLocations}
+              currentLocation={location}
+              onSelectLocation={handleSelectLocation}
+              onRemoveLocation={handleRemoveLocation}
+              onSaveCurrentLocation={handleSaveCurrentLocation}
+            />
           </>
         )}
       </main>
     </div>
   );
 }
-

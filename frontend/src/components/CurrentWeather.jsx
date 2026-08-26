@@ -1,102 +1,107 @@
 /**
- * CurrentWeather.jsx — Responsive Hero weather display card.
+ * CurrentWeather.jsx — Modern Hero Weather Component.
  *
- * Shows: city name, large temperature, condition,
- * feels-like, daily high/low, and responsive weather emoji.
+ * Visual focal point of WeatherWise:
+ * - Ultra-clean typography and visual hierarchy
+ * - Big temperature, condition text, high/low pills, and animated weather emoji
+ * - Responsive layout: 320px mobile to 1440px+ desktop
  */
 
-import { MapPin, ArrowUp, ArrowDown } from 'lucide-react';
+import { MapPin, ArrowUp, ArrowDown, Sparkles } from 'lucide-react';
 import { getWeatherEmoji, getTempColor } from '../utils/weatherUtils';
 
 export default function CurrentWeather({ weather, location }) {
-  if (!weather) return null;
+  if (!weather?.current) return null;
 
   const { current, daily } = weather;
   const today = daily?.[0];
   const emoji = getWeatherEmoji(current.weather_code);
   const tempColor = getTempColor(current.temperature);
 
-  // Background gradient changes based on day/night
-  const bgGradient = current.is_day
-    ? 'linear-gradient(135deg, rgba(99,102,241,0.18) 0%, rgba(6,182,212,0.12) 100%)'
-    : 'linear-gradient(135deg, rgba(30,20,80,0.5) 0%, rgba(10,15,40,0.4) 100%)';
-
   return (
-    <div
-      className="glass-card-static fade-in p-5 sm:p-7 lg:p-8 relative overflow-hidden rounded-2xl sm:rounded-3xl border border-indigo-500/20"
-      style={{ background: bgGradient }}
-    >
-      {/* Background decorative ambient glow */}
+    <section aria-label="Current Weather" className="fade-in w-full">
       <div
-        className="absolute -top-12 -right-12 w-48 sm:w-64 h-48 sm:h-64 rounded-full pointer-events-none blur-3xl opacity-30"
-        style={{ background: 'radial-gradient(circle, #6366f1, transparent)' }}
-      />
-
-      <div className="flex items-center justify-between gap-4 relative z-10">
-        {/* Left: Text & Numbers */}
-        <div className="min-w-0 flex-1">
-          {/* Location Title */}
-          <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3">
-            <MapPin size={16} className="text-cyan-400 flex-shrink-0" />
-            <span className="text-sm sm:text-base font-bold text-slate-200 break-words">
-              {location?.name || weather.location}
-              {location?.country && (
-                <span className="text-slate-400 font-normal ml-1">
-                  , {location.country}
-                </span>
-              )}
-            </span>
-          </div>
-
-          {/* Temperature */}
-          <div className="flex items-baseline gap-1 sm:gap-2 mb-1.5 sm:mb-2">
-            <span
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-none"
-              style={{
-                color: tempColor,
-                textShadow: `0 0 35px ${tempColor}40`,
-              }}
-            >
-              {Math.round(current.temperature)}°
-            </span>
-            <span className="text-xl sm:text-2xl font-bold text-slate-400">C</span>
-          </div>
-
-          {/* Weather Condition */}
-          <p className="text-lg sm:text-xl md:text-2xl font-bold text-slate-100 mb-1 break-words">
-            {current.weather_condition}
-          </p>
-
-          {/* Feels like */}
-          <p className="text-xs sm:text-sm text-slate-400 mb-3 sm:mb-4">
-            Feels like <span className="text-slate-200 font-semibold">{Math.round(current.feels_like)}°C</span>
-          </p>
-
-          {/* High / Low Badges */}
-          {today && (
-            <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
-              <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-500/10 border border-red-500/20 text-xs font-bold text-red-300">
-                <ArrowUp size={13} className="text-red-400" />
-                <span>H: {Math.round(today.temp_max)}°C</span>
-              </div>
-              <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-xs font-bold text-cyan-300">
-                <ArrowDown size={13} className="text-cyan-400" />
-                <span>L: {Math.round(today.temp_min)}°C</span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Right: Weather Emoji */}
+        className="relative overflow-hidden rounded-3xl p-6 sm:p-8 md:p-10 border border-white/10 shadow-2xl transition-all"
+        style={{
+          background: 'linear-gradient(135deg, rgba(30, 41, 77, 0.7) 0%, rgba(13, 20, 36, 0.85) 100%)',
+          backdropFilter: 'blur(30px)',
+          WebkitBackdropFilter: 'blur(30px)',
+        }}
+      >
+        {/* Soft atmospheric gradient accent */}
         <div
-          className="weather-icon-pulse text-5xl sm:text-6xl md:text-7xl lg:text-8xl flex-shrink-0 select-none drop-shadow-xl"
-          role="img"
-          aria-label={current.weather_condition}
-        >
-          {emoji}
+          className="absolute -top-24 -right-24 w-72 h-72 rounded-full opacity-20 pointer-events-none filter blur-3xl"
+          style={{ background: tempColor }}
+        />
+
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
+          {/* Left: Location, Condition, and Primary Temperature */}
+          <div className="flex-1 min-w-0">
+            {/* Location Pill */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-4 sm:mb-6">
+              <MapPin size={14} className="text-cyan-400 flex-shrink-0" />
+              <span className="text-xs sm:text-sm font-semibold text-slate-200 break-words">
+                {location?.name || weather.location}
+                {location?.country && <span className="text-slate-400 font-normal">, {location.country}</span>}
+              </span>
+            </div>
+
+            {/* Main Temperature & Degree */}
+            <div className="flex items-baseline gap-2 sm:gap-3 mb-2 sm:mb-3">
+              <span
+                className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-none"
+                style={{
+                  color: tempColor,
+                  textShadow: `0 0 40px ${tempColor}35`,
+                }}
+              >
+                {Math.round(current.temperature)}°
+              </span>
+              <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-400">C</span>
+            </div>
+
+            {/* Weather Condition */}
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-100 tracking-tight mb-2 break-words">
+              {current.weather_condition}
+            </h2>
+
+            {/* Feels like + High/Low Badges Row */}
+            <div className="flex items-center gap-3 sm:gap-4 flex-wrap text-xs sm:text-sm text-slate-300">
+              <span className="font-medium text-slate-400">
+                Feels like <strong className="text-slate-100 font-semibold">{Math.round(current.feels_like)}°C</strong>
+              </span>
+
+              {today && (
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-red-500/10 border border-red-500/20 text-red-300 font-semibold text-xs">
+                    <ArrowUp size={12} className="text-red-400" />
+                    {Math.round(today.temp_max)}°
+                  </span>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 font-semibold text-xs">
+                    <ArrowDown size={12} className="text-cyan-400" />
+                    {Math.round(today.temp_min)}°
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right: Weather Emoji & Atmospheric Mood Illustration */}
+          <div className="flex flex-col items-start md:items-end justify-center flex-shrink-0 pt-2 md:pt-0">
+            <div
+              className="weather-icon-pulse text-6xl sm:text-7xl md:text-8xl lg:text-9xl select-none"
+              role="img"
+              aria-label={current.weather_condition}
+            >
+              {emoji}
+            </div>
+            <div className="flex items-center gap-1.5 mt-3 text-[11px] font-medium text-slate-400 bg-white/5 px-2.5 py-1 rounded-full border border-white/5">
+              <Sparkles size={11} className="text-cyan-400" />
+              <span>Real-Time Weather</span>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
-

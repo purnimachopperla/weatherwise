@@ -1,11 +1,13 @@
 /**
- * AQICard.jsx — Detailed Air Quality Index card.
+ * AQICard.jsx — Modern Air Quality Index & Pollutant Breakdown.
  *
- * Shows AQI gauge, category, and detailed breakdown
- * of PM2.5, PM10, Ozone, NO2.
- * Fully responsive: Scales cleanly down to 320px screens.
+ * Visual Features:
+ * - Color-coded AQI score badge and gauge
+ * - Detailed breakdown of PM2.5, PM10, Ozone, NO2
+ * - Fits cleanly into the split dashboard grid
  */
 
+import { Activity, Wind } from 'lucide-react';
 import { getAQIColor, getAQILabel } from '../utils/weatherUtils';
 
 export default function AQICard({ airQuality }) {
@@ -15,7 +17,7 @@ export default function AQICard({ airQuality }) {
   const aqiColor = getAQIColor(aqi);
   const aqiLabel = getAQILabel(aqi);
 
-  // Gauge: AQI from 0–150 mapped to 0–100% width (cap at 150)
+  // Map AQI (0–150) to 0–100% width
   const gaugePercent = aqi != null ? Math.min((aqi / 150) * 100, 100) : 0;
 
   const pollutants = [
@@ -26,21 +28,30 @@ export default function AQICard({ airQuality }) {
   ].filter(p => p.value != null);
 
   return (
-    <div className="glass-card fade-in p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-indigo-500/20">
-      <h3 className="text-xs sm:text-sm text-slate-400 font-bold uppercase tracking-wider mb-3 sm:mb-4">
-        Air Quality Index (AQI)
-      </h3>
+    <div className="glass-panel p-5 sm:p-6 rounded-3xl border border-white/5">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Activity size={16} className="text-cyan-400" />
+          <h3 className="text-xs sm:text-sm font-bold text-slate-300 uppercase tracking-wider">
+            Air Quality Index
+          </h3>
+        </div>
+        <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">
+          Live Data
+        </span>
+      </div>
 
-      {/* AQI Value + Label */}
-      <div className="flex items-center gap-3 sm:gap-4 mb-4">
+      {/* AQI Big Score & Category */}
+      <div className="flex items-center gap-4 mb-4">
         <div
-          className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center flex-shrink-0 border-2 shadow-lg transition-transform"
+          className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center flex-shrink-0 border shadow-md"
           style={{
-            background: `${aqiColor}20`,
-            borderColor: aqiColor,
+            background: `${aqiColor}15`,
+            borderColor: `${aqiColor}40`,
           }}
         >
-          <span className="text-xl sm:text-2xl font-black" style={{ color: aqiColor }}>
+          <span className="text-2xl sm:text-3xl font-black" style={{ color: aqiColor }}>
             {aqi != null ? Math.round(aqi) : '—'}
           </span>
         </div>
@@ -48,14 +59,13 @@ export default function AQICard({ airQuality }) {
           <p className="text-base sm:text-lg font-bold leading-tight break-words" style={{ color: aqiColor }}>
             {aqiLabel}
           </p>
-          <p className="text-xs text-slate-400 font-medium mt-0.5 leading-tight">European Air Quality Standard</p>
+          <p className="text-xs text-slate-400 font-medium mt-0.5">European Air Quality Standard</p>
         </div>
       </div>
 
       {/* Gauge Bar */}
-      <div className="mb-4 sm:mb-5">
-        <div className="h-2 rounded-full bg-gradient-to-r from-emerald-500 via-amber-500 to-purple-600 relative overflow-visible">
-          {/* Indicator */}
+      <div className="mb-5">
+        <div className="h-2 rounded-full bg-gradient-to-r from-emerald-500 via-amber-500 to-purple-600 relative">
           <div
             className="absolute -top-1 w-4 h-4 rounded-full bg-white border-2 shadow-md transition-all duration-300"
             style={{
@@ -65,32 +75,32 @@ export default function AQICard({ airQuality }) {
             }}
           />
         </div>
-        <div className="flex justify-between mt-1.5 text-[10px] text-slate-500 font-bold">
-          <span>0 (Good)</span>
-          <span>75 (Moderate)</span>
-          <span>150+ (Hazardous)</span>
+        <div className="flex justify-between mt-1.5 text-[10px] text-slate-500 font-semibold">
+          <span>0 Good</span>
+          <span>75 Moderate</span>
+          <span>150+ Hazardous</span>
         </div>
       </div>
 
-      {/* Pollutant Breakdown */}
+      {/* Key Pollutants Grid */}
       {pollutants.length > 0 && (
         <div>
-          <p className="text-[10px] sm:text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-2">
+          <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-2.5">
             Key Pollutants
           </p>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2.5">
             {pollutants.map((p) => {
               const pct = Math.min((p.value / p.limit) * 100, 100);
               const color = pct > 80 ? '#ef4444' : pct > 50 ? '#f97316' : '#10b981';
               return (
                 <div
                   key={p.label}
-                  className="p-2.5 rounded-xl bg-slate-900/60 border border-indigo-500/10 flex flex-col justify-between"
+                  className="p-2.5 rounded-xl bg-slate-950/60 border border-white/5 flex flex-col justify-between"
                 >
                   <div className="flex items-baseline justify-between gap-1 mb-1.5">
-                    <span className="text-[11px] text-slate-400 font-semibold">{p.label}</span>
-                    <span className="text-xs font-black truncate" style={{ color }}>
-                      {p.value.toFixed(1)}
+                    <span className="text-xs text-slate-400 font-medium">{p.label}</span>
+                    <span className="text-xs font-bold" style={{ color }}>
+                      {p.value.toFixed(1)} <span className="text-[10px] text-slate-500 font-normal">{p.unit}</span>
                     </span>
                   </div>
                   <div className="h-1.5 rounded-full bg-slate-800 overflow-hidden">
@@ -108,4 +118,3 @@ export default function AQICard({ airQuality }) {
     </div>
   );
 }
-

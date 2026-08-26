@@ -1,68 +1,100 @@
 /**
- * WeatherChart.jsx — Recharts-powered weather charts.
+ * WeatherChart.jsx — Interactive 24-hour temperature & rain probability trends.
  *
- * Two charts:
- * 1. Temperature trend (hourly, 24h)
- * 2. Rain probability (hourly, 24h)
- *
- * Fully responsive: adapts padding, ticks, and containers cleanly across all screen sizes.
+ * Visual Features:
+ * - Tabbed or stacked clean charts using Recharts
+ * - Custom glass tooltips and gradient area fills
  */
 
+import { useState } from 'react';
 import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, BarChart, Bar,
+  AreaChart, Area, BarChart, Bar,
+  XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
 } from 'recharts';
+import { TrendingUp, CloudRain } from 'lucide-react';
 import { formatHour } from '../utils/weatherUtils';
 
-// Custom tooltip that matches our dark theme
+// Custom modern tooltip component
 function CustomTooltip({ active, payload, label, unit, color }) {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="bg-slate-950/95 backdrop-blur-md border border-indigo-500/30 rounded-xl px-3 py-2 text-xs shadow-xl shadow-black/60">
-      <p className="text-slate-400 font-medium mb-1">{label}</p>
-      <p className="font-bold text-sm" style={{ color }}>
-        {payload[0].value}{unit}
-      </p>
-    </div>
-  );
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-slate-950/90 border border-indigo-500/30 rounded-xl p-2.5 shadow-xl text-xs backdrop-blur-md">
+        <p className="text-slate-400 font-medium mb-0.5">{label}</p>
+        <p className="font-bold flex items-center gap-1.5" style={{ color }}>
+          <span>{payload[0].value}{unit}</span>
+        </p>
+      </div>
+    );
+  }
+  return null;
 }
 
 export default function WeatherChart({ weather }) {
+  const [activeTab, setActiveTab] = useState('temp'); // 'temp' | 'rain'
+
   if (!weather?.hourly?.length) return null;
 
-  // Use first 24 hours
-  const hourly = weather.hourly.slice(0, 24);
-  const chartData = hourly.map((h, i) => ({
+  const chartData = weather.hourly.slice(0, 24).map((h, i) => ({
     time: i === 0 ? 'Now' : formatHour(h.time),
     temperature: Math.round(h.temperature),
-    rain: h.rain_probability,
-    humidity: Math.round(h.humidity),
+    rain: h.rain_probability || 0,
   }));
 
   return (
-    <div className="flex flex-col gap-3.5 sm:gap-5 fade-in w-full overflow-hidden">
-      {/* ── Temperature Chart ───────────────────────── */}
-      <div className="glass-card-static p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-indigo-500/20">
-        <h3 className="text-xs sm:text-sm text-slate-400 font-bold uppercase tracking-wider mb-3 sm:mb-4">
-          🌡️ Temperature Trend (24h)
-        </h3>
-        <div className="w-full h-44 sm:h-52">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 5, right: 10, bottom: 0, left: -20 }}>
+    <div className="glass-panel p-5 sm:p-6 rounded-3xl border border-white/5 w-full">
+      {/* Header & Tab Selector */}
+      <div className="flex items-center justify-between gap-2 mb-4">
+        <div className="flex items-center gap-2">
+          <TrendingUp size={16} className="text-cyan-400" />
+          <h3 className="text-xs sm:text-sm font-bold text-slate-300 uppercase tracking-wider">
+            24h Trends
+          </h3>
+        </div>
+
+        {/* Tab Toggle */}
+        <div className="inline-flex p-1 rounded-xl bg-slate-950/70 border border-white/5 text-xs">
+          <button
+            onClick={() => setActiveTab('temp')}
+            className={`px-3 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
+              activeTab === 'temp'
+                ? 'bg-indigo-500/25 text-white border border-indigo-500/40 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            Temperature
+          </button>
+          <button
+            onClick={() => setActiveTab('rain')}
+            className={`px-3 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
+              activeTab === 'rain'
+                ? 'bg-cyan-500/25 text-white border border-cyan-500/40 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            Rain Probability
+          </button>
+        </div>
+      </div>
+
+      {/* Chart Canvas */}
+      <div className="w-full h-48 sm:h-56">
+        <ResponsiveContainer width="100%" height="100%">
+          {activeTab === 'temp' ? (
+            <AreaChart data={chartData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
               <defs>
-                <linearGradient id="tempGradient" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="tempGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#f97316" stopOpacity={0.35} />
-                  <stop offset="95%" stopColor="#f97316" stopOpacity={0.02} />
+                  <stop offset="95%" stopColor="#f97316" stopOpacity={0.0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(99,102,241,0.12)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
               <XAxis
                 dataKey="time"
                 tick={{ fill: '#64748b', fontSize: 10 }}
                 tickLine={false}
                 axisLine={false}
                 interval="preserveStartEnd"
-                minTickGap={24}
+                minTickGap={20}
               />
               <YAxis
                 tick={{ fill: '#64748b', fontSize: 10 }}
@@ -77,37 +109,27 @@ export default function WeatherChart({ weather }) {
                 dataKey="temperature"
                 stroke="#f97316"
                 strokeWidth={2.5}
-                fill="url(#tempGradient)"
+                fill="url(#tempGrad)"
                 dot={false}
                 activeDot={{ r: 4, fill: '#f97316', strokeWidth: 0 }}
               />
             </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* ── Rain Probability Chart ───────────────────── */}
-      <div className="glass-card-static p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-indigo-500/20">
-        <h3 className="text-xs sm:text-sm text-slate-400 font-bold uppercase tracking-wider mb-3 sm:mb-4">
-          🌧️ Rain Probability (24h)
-        </h3>
-        <div className="w-full h-40 sm:h-48">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 5, right: 10, bottom: 0, left: -20 }}>
+          ) : (
+            <BarChart data={chartData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
               <defs>
-                <linearGradient id="rainGradient" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="rainGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.9} />
                   <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.3} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(99,102,241,0.12)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
               <XAxis
                 dataKey="time"
                 tick={{ fill: '#64748b', fontSize: 10 }}
                 tickLine={false}
                 axisLine={false}
                 interval="preserveStartEnd"
-                minTickGap={24}
+                minTickGap={20}
               />
               <YAxis
                 tick={{ fill: '#64748b', fontSize: 10 }}
@@ -119,14 +141,13 @@ export default function WeatherChart({ weather }) {
               <Tooltip content={<CustomTooltip unit="%" color="#06b6d4" />} />
               <Bar
                 dataKey="rain"
-                fill="url(#rainGradient)"
+                fill="url(#rainGrad)"
                 radius={[4, 4, 0, 0]}
               />
             </BarChart>
-          </ResponsiveContainer>
-        </div>
+          )}
+        </ResponsiveContainer>
       </div>
     </div>
   );
 }
-
