@@ -1,12 +1,12 @@
 /* ─────────────────────────────────────────────
-   Google Fonts — Inter (Clean, Enterprise Sans-Serif)
+   Google Fonts — Plus Jakarta Sans & Inter
 ───────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────
    Environmental Intelligence Design System
-   Restrained, Trustworthy, SIH-Ready Palette
+   Modern, Clean, High-Contrast Palette
 ───────────────────────────────────────────── */
 :root {
   --color-primary: #0f766e;       /* Deep Teal */
@@ -23,16 +23,17 @@
   --color-warning: #d97706;       /* Amber 600 */
   --color-danger: #dc2626;        /* Red 600 */
 
-  --radius-card: 18px;
-  --radius-button: 10px;
+  --radius-card: 20px;
+  --radius-button: 12px;
   --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
   --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
   --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
   --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ─────────────────────────────────────────────
-   Base Styles
+   Base Typography & Styles
 ───────────────────────────────────────────── */
 * {
   box-sizing: border-box;
@@ -47,7 +48,7 @@ html {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--color-bg);
   min-height: 100vh;
   height: auto;
@@ -78,12 +79,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: var(--color-bg);
+  background: radial-gradient(circle at 50% 0%, #f1fdfb 0%, #f8fafc 40%, #f8fafc 100%);
 }
 
 .dashboard-container {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1380px;
   margin-inline: auto;
   padding-inline: 16px;
 }
@@ -122,6 +123,7 @@ body {
 .panel-card-interactive:hover {
   border-color: #cbd5e1;
   box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 /* ─────────────────────────────────────────────
@@ -131,8 +133,8 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
-  background-color: var(--color-primary);
+  padding: 8px 18px;
+  background: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
   color: #ffffff;
   border: 1px solid transparent;
   border-radius: var(--radius-button);
@@ -140,18 +142,19 @@ body {
   font-size: 13px;
   cursor: pointer;
   transition: var(--transition);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 4px 0 rgba(15, 118, 110, 0.2);
 }
 
 .btn-primary:hover {
-  background-color: var(--color-primary-dark);
+  background: linear-gradient(135deg, #115e59 0%, #042f2e 100%);
+  box-shadow: 0 4px 6px 0 rgba(15, 118, 110, 0.3);
 }
 
 .btn-secondary {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
+  padding: 8px 18px;
   background-color: #ffffff;
   color: var(--color-text-main);
   border: 1px solid var(--color-border);
@@ -172,13 +175,13 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 12px;
+  padding: 7px 14px;
   background: transparent;
   color: var(--color-text-muted);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-button);
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
 }
@@ -190,7 +193,7 @@ body {
 }
 
 /* ─────────────────────────────────────────────
-   Skeleton Shimmer (Clean Light Theme)
+   Skeleton Shimmer
 ───────────────────────────────────────────── */
 .skeleton {
   background: linear-gradient(
@@ -201,7 +204,7 @@ body {
   );
   background-size: 200% 100%;
   animation: shimmer 1.6s infinite;
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
 @keyframes shimmer {
