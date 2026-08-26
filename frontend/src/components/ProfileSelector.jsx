@@ -1,54 +1,55 @@
 /**
- * ProfileSelector.jsx — Persona selection horizontal pill bar.
+ * ProfileSelector.jsx — Enterprise Persona Selection Strip.
  *
- * Allows switching between 8 lifestyle personas:
- * Health-Conscious, Fitness/Runner, Parent/Kids, Commuter,
- * Outdoor Enthusiast, Farmer/Gardener, Event Planner, Senior Citizen.
+ * Provides quick selection between 8 stakeholder decision-support personas:
+ * Health & Wellness, Athletics, Family, Commute, Agriculture, Travel, Coastal, Public Events.
  */
 
 import { PROFILES } from '../utils/recommendationUtils';
-import { UserCheck } from 'lucide-react';
+import {
+  Heart, Activity, Plane, Users, Sprout, Car, Waves, CalendarCheck, SlidersHorizontal
+} from 'lucide-react';
+
+const ICON_MAP = {
+  Heart, Activity, Plane, Users, Sprout, Car, Waves, CalendarCheck
+};
 
 export default function ProfileSelector({ activeProfile, onProfileChange }) {
   return (
-    <section aria-label="Lifestyle Persona Selector" className="w-full">
-      <div className="flex items-center justify-between gap-2 mb-2 px-1">
-        <div className="flex items-center gap-1.5">
-          <UserCheck size={14} className="text-cyan-400" />
-          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-            Lifestyle Persona
+    <section aria-label="Stakeholder Decision Profiles" className="w-full">
+      <div className="flex items-center justify-between gap-2 mb-2 px-0.5">
+        <div className="flex items-center gap-1.5 text-slate-700">
+          <SlidersHorizontal size={14} className="text-teal-700" />
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-800">
+            Decision Intelligence Persona
           </span>
         </div>
         <span className="text-[11px] text-slate-500 font-medium hidden sm:inline">
-          Select your lifestyle mode
+          Select target profile to evaluate tailored risk recommendations
         </span>
       </div>
 
       <div
-        className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scroll-smooth w-full"
+        className="flex gap-2 overflow-x-auto pb-1.5 scrollbar-thin scroll-smooth w-full"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {PROFILES.map((profile) => {
           const isActive = activeProfile === profile.key;
+          const IconComp = ICON_MAP[profile.icon] || Activity;
+
           return (
             <button
               key={profile.key}
               onClick={() => onProfileChange(profile.key)}
               aria-pressed={isActive}
-              aria-label={`Switch to ${profile.fullLabel} profile`}
-              className={`inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer flex-shrink-0 select-none min-h-[38px] ${
+              aria-label={`Select ${profile.fullLabel}`}
+              className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer flex-shrink-0 select-none min-h-[36px] ${
                 isActive
-                  ? 'text-white shadow-lg border-transparent'
-                  : 'bg-slate-900/70 text-slate-300 border border-white/5 hover:border-white/20 hover:text-white hover:bg-slate-800/70'
+                  ? 'bg-teal-700 text-white shadow-xs border border-teal-800'
+                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300'
               }`}
-              style={{
-                background: isActive
-                  ? `linear-gradient(135deg, ${profile.color}, ${profile.color}dd)`
-                  : undefined,
-                boxShadow: isActive ? `0 4px 16px ${profile.color}40` : undefined,
-              }}
             >
-              <span className="text-sm sm:text-base leading-none">{profile.emoji}</span>
+              <IconComp size={14} className={isActive ? 'text-teal-100' : 'text-slate-500'} />
               <span>{profile.label}</span>
             </button>
           );

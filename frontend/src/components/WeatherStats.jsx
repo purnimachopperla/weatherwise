@@ -1,14 +1,14 @@
 /**
- * WeatherStats.jsx — Compact, modern weather metric tiles.
+ * WeatherStats.jsx — Environmental Status Metrics Grid.
  *
  * Displays: AQI, UV Index, Humidity, Wind Speed, Visibility, Pressure
- * Responsive: 2 cols on mobile, 3 cols on tablet, 6 cols on desktop.
+ * Styled with enterprise-grade subtle borders and clean typography.
  */
 
 import { Wind, Droplets, Eye, Gauge, Sun, Activity } from 'lucide-react';
 import {
-  getAQIColor, getAQILabel,
-  getUVLabel, getUVColor,
+  getAQILabel,
+  getUVLabel,
   getWindLabel,
   getVisibilityLabel, formatVisibility,
   getHumidityLabel,
@@ -20,106 +20,92 @@ export default function WeatherStats({ weather, airQuality }) {
   const { current } = weather;
   const uv = airQuality?.uv_index;
   const aqi = airQuality?.aqi;
-  const aqiColor = getAQIColor(aqi);
-  const uvColor = getUVColor(uv);
 
   const stats = [
     {
       id: 'aqi',
-      label: 'Air Quality',
+      label: 'Air Quality (AQI)',
       value: aqi != null ? Math.round(aqi) : 'N/A',
-      unit: 'AQI',
+      unit: '',
       sub: getAQILabel(aqi),
-      icon: <Activity size={16} />,
-      color: aqiColor,
+      icon: <Activity size={16} className="text-teal-700" />,
     },
     {
       id: 'uv',
-      label: 'UV Index',
+      label: 'UV Radiation',
       value: uv != null ? uv.toFixed(1) : 'N/A',
-      unit: '',
+      unit: 'Index',
       sub: getUVLabel(uv),
-      icon: <Sun size={16} />,
-      color: uvColor,
+      icon: <Sun size={16} className="text-amber-600" />,
     },
     {
       id: 'humidity',
-      label: 'Humidity',
+      label: 'Relative Humidity',
       value: `${Math.round(current.humidity)}`,
       unit: '%',
       sub: getHumidityLabel(current.humidity),
-      icon: <Droplets size={16} />,
-      color: '#06b6d4',
+      icon: <Droplets size={16} className="text-sky-600" />,
     },
     {
       id: 'wind',
-      label: 'Wind Speed',
+      label: 'Wind Velocity',
       value: `${Math.round(current.wind_speed)}`,
       unit: 'km/h',
       sub: getWindLabel(current.wind_speed),
-      icon: <Wind size={16} />,
-      color: '#818cf8',
+      icon: <Wind size={16} className="text-indigo-600" />,
     },
     {
       id: 'visibility',
-      label: 'Visibility',
+      label: 'Atmospheric Visibility',
       value: formatVisibility(current.visibility),
       unit: '',
       sub: getVisibilityLabel(current.visibility),
-      icon: <Eye size={16} />,
-      color: '#10b981',
+      icon: <Eye size={16} className="text-emerald-600" />,
     },
     {
       id: 'pressure',
-      label: 'Pressure',
+      label: 'Barometric Pressure',
       value: current.pressure != null ? `${Math.round(current.pressure)}` : 'N/A',
       unit: 'hPa',
-      sub: current.pressure > 1013 ? 'High' : 'Normal',
-      icon: <Gauge size={16} />,
-      color: '#f59e0b',
+      sub: current.pressure > 1013 ? 'High' : 'Standard',
+      icon: <Gauge size={16} className="text-slate-600" />,
     },
   ];
 
   return (
-    <section aria-label="Key Weather Metrics" className="fade-in w-full">
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3.5">
+    <section aria-label="Environmental Status Metrics" className="fade-in w-full">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         {stats.map((stat) => (
           <div
             key={stat.id}
-            className="p-3.5 sm:p-4 rounded-2xl bg-slate-900/60 border border-white/5 hover:border-indigo-500/30 transition-all flex flex-col justify-between"
+            className="p-3.5 sm:p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-300 transition-all flex flex-col justify-between shadow-2xs"
           >
             {/* Header: Icon + Label */}
             <div className="flex items-center gap-2 mb-2">
-              <div
-                className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
-                style={{ background: `${stat.color}18`, color: stat.color }}
-              >
+              <div className="w-6 h-6 rounded-md bg-slate-50 flex items-center justify-center flex-shrink-0 border border-slate-100">
                 {stat.icon}
               </div>
-              <span className="text-[11px] font-semibold text-slate-400 truncate">
+              <span className="text-[11px] font-semibold text-slate-500 truncate">
                 {stat.label}
               </span>
             </div>
 
             {/* Value */}
             <div className="flex items-baseline gap-1 my-0.5">
-              <span
-                className="text-lg sm:text-xl font-bold tracking-tight leading-none"
-                style={{ color: stat.color }}
-              >
+              <span className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight leading-none">
                 {stat.value}
               </span>
               {stat.unit && (
-                <span className="text-[11px] font-medium text-slate-500">
+                <span className="text-xs font-medium text-slate-500">
                   {stat.unit}
                 </span>
               )}
             </div>
 
-            {/* Sub-label */}
-            <p className="text-[11px] text-slate-400 font-medium break-words leading-tight mt-1">
-              {stat.sub}
-            </p>
+            {/* Sublabel classification */}
+            <div className="text-[11px] font-medium text-slate-600 truncate mt-1">
+              Status: <span className="font-semibold text-slate-800">{stat.sub}</span>
+            </div>
           </div>
         ))}
       </div>

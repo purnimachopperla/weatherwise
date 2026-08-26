@@ -1,65 +1,50 @@
 /**
- * ErrorState.jsx — Friendly error display component.
- *
- * Shown when the API fails, the city is not found,
- * or there's a network error. Never shows a blank screen.
+ * ErrorState.jsx — Professional error state display with diagnostic guidance.
  */
 
-import { AlertCircle, RefreshCw, Search } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Search } from 'lucide-react';
 
 export default function ErrorState({ message, onRetry, onSearch }) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-64 p-8 text-center fade-in">
+    <div className="panel-card p-8 sm:p-12 text-center bg-white border border-slate-200 fade-in my-6 max-w-2xl mx-auto">
       {/* Error Icon */}
-      <div
-        className="w-20 h-20 rounded-full flex items-center justify-center mb-6"
-        style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)' }}
-      >
-        <AlertCircle size={36} style={{ color: '#ef4444' }} />
+      <div className="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto mb-4">
+        <AlertTriangle size={30} />
       </div>
 
       {/* Error Title */}
-      <h2
-        className="text-2xl font-bold mb-3"
-        style={{ color: '#f1f5f9' }}
-      >
-        Something went wrong
+      <h2 className="text-xl font-bold text-slate-900 mb-2">
+        Telemetry Link Interrupted
       </h2>
 
       {/* Error Message */}
-      <p
-        className="text-base mb-8 max-w-md leading-relaxed"
-        style={{ color: '#94a3b8' }}
-      >
-        {message || 'Weather service is temporarily unavailable. Please try again.'}
+      <p className="text-sm text-slate-600 mb-6 max-w-md mx-auto leading-relaxed">
+        {message || 'Unable to retrieve meteorological and environmental telemetry. Please verify connection and retry.'}
       </p>
 
-      {/* Action Buttons */}
-      <div className="flex flex-wrap gap-3 justify-center">
+      {/* Actions */}
+      <div className="flex flex-wrap gap-3 justify-center mb-8">
         {onRetry && (
           <button className="btn-primary" onClick={onRetry}>
-            <RefreshCw size={16} />
-            Try Again
+            <RefreshCw size={15} />
+            <span>Reconnect & Retry</span>
           </button>
         )}
         {onSearch && (
           <button className="btn-secondary" onClick={onSearch}>
-            <Search size={16} />
-            Search a City
+            <Search size={15} />
+            <span>Search Different Station</span>
           </button>
         )}
       </div>
 
-      {/* Helpful Tips */}
-      <div
-        className="mt-8 p-4 rounded-xl text-sm text-left max-w-sm"
-        style={{ background: 'rgba(99,102,241,0.05)', border: '1px solid rgba(99,102,241,0.15)' }}
-      >
-        <p className="font-semibold mb-2" style={{ color: '#94a3b8' }}>💡 Troubleshooting</p>
-        <ul className="space-y-1" style={{ color: '#64748b' }}>
-          <li>• Check your internet connection</li>
-          <li>• Make sure the backend is running on port 8000</li>
-          <li>• Try searching for a different city</li>
+      {/* Diagnostic Details */}
+      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-left max-w-md mx-auto">
+        <p className="font-bold text-slate-800 mb-2">Diagnostic Checklist:</p>
+        <ul className="space-y-1.5 text-slate-600">
+          <li>• Verify Internet connectivity or API gateway status</li>
+          <li>• Ensure backend service is reachable on port 8000</li>
+          <li>• Try searching for a major metropolitan station (e.g. Hyderabad, Delhi)</li>
         </ul>
       </div>
     </div>

@@ -1,113 +1,99 @@
 /**
- * Header.jsx — Centered, balanced application navigation bar.
+ * Header.jsx — Enterprise Environmental Intelligence Top Navigation.
  *
- * Fully responsive:
- * - Desktop (1024px to 1920px+): Sleek single-row layout with centered search bar
- * - Mobile/Tablet: Clean 2-row layout with full-width search and comfortable touch targets
+ * Professional, clean header compliant with Government / SIH presentation guidelines.
  */
 
-import { Navigation, Loader, MapPin, Settings } from 'lucide-react';
+import { Navigation, Loader, MapPin, Settings, ShieldCheck, Activity } from 'lucide-react';
 import LocationSearch from './LocationSearch';
 
 export default function Header({ location, onSelectLocation, onDetectLocation, detecting, onOpenSettings }) {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-indigo-500/20 bg-slate-950/90 backdrop-blur-xl py-2.5 sm:py-3">
+    <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md py-2.5 sm:py-3 shadow-xs">
       <div className="dashboard-container flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
-        {/* Top bar on mobile / Left group on desktop */}
+        {/* Brand & Platform Crest */}
         <div className="flex items-center justify-between gap-3 sm:gap-4 flex-shrink-0">
-          {/* Logo */}
-          <div className="flex items-center gap-2.5 flex-shrink-0">
-            <div
-              className="w-9 h-9 rounded-2xl flex items-center justify-center text-lg shadow-md shadow-indigo-500/25"
-              style={{ background: 'linear-gradient(135deg, #6366f1, #06b6d4)' }}
-            >
-              🌤️
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-teal-700 text-white flex items-center justify-center shadow-xs">
+              <ShieldCheck size={20} />
             </div>
             <div>
-              <h1 className="gradient-text text-base sm:text-lg font-black tracking-tight leading-none">
-                WeatherWise
-              </h1>
-              <p className="text-[10px] text-slate-400 font-medium tracking-wide mt-0.5 hidden xs:block">
-                Smart Weather Assistant
+              <div className="flex items-center gap-2">
+                <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-none">
+                  WeatherWise
+                </h1>
+                <span className="text-[10px] font-bold text-teal-800 bg-teal-50 border border-teal-200/80 px-2 py-0.5 rounded-md hidden xs:inline-block">
+                  SIH 2024
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500 font-medium tracking-normal mt-0.5">
+                Environmental Decision Intelligence Platform
               </p>
             </div>
           </div>
 
-          {/* Current Location Badge (tablet/mobile) */}
-          {location && (
-            <div className="hidden sm:flex md:hidden items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex-shrink-0 max-w-[200px] truncate">
-              <MapPin size={12} className="text-indigo-400 flex-shrink-0" />
-              <span className="text-xs text-slate-300 font-medium truncate">
-                {location.name}{location.country ? `, ${location.country}` : ''}
-              </span>
-            </div>
-          )}
-
-          {/* Mobile Action Buttons (My Location & Settings) */}
-          <div className="flex items-center gap-2 md:hidden">
+          {/* Mobile Buttons */}
+          <div className="flex items-center gap-1.5 md:hidden">
             <button
-              className="btn-ghost !p-2 !min-h-[38px] !min-w-[38px] flex items-center justify-center rounded-xl"
+              className="btn-ghost !p-2 !min-h-[36px] !min-w-[36px] flex items-center justify-center rounded-lg"
               onClick={onDetectLocation}
               disabled={detecting}
-              aria-label="Use my current location"
+              aria-label="Locate Device"
               title="Use current location"
             >
               {detecting ? (
-                <Loader size={16} className="animate-spin text-cyan-400" />
+                <Loader size={16} className="animate-spin text-teal-700" />
               ) : (
-                <Navigation size={16} className="text-cyan-400" />
+                <Navigation size={16} className="text-slate-600" />
               )}
             </button>
 
             <button
-              className="btn-ghost !p-2 !min-h-[38px] !min-w-[38px] flex items-center justify-center rounded-xl"
+              className="btn-ghost !p-2 !min-h-[36px] !min-w-[36px] flex items-center justify-center rounded-lg"
               onClick={onOpenSettings}
-              aria-label="Open settings"
-              title="Settings"
+              aria-label="Platform Information & Settings"
+              title="Settings & Data Sources"
             >
-              <Settings size={16} className="text-slate-300" />
+              <Settings size={16} className="text-slate-600" />
             </button>
           </div>
         </div>
 
-        {/* Search input (centered on desktop, full-width on mobile) */}
-        <div className="flex-1 w-full max-w-full md:max-w-[480px] lg:max-w-[560px] mx-auto">
+        {/* Center Search Input */}
+        <div className="flex-1 w-full max-w-full md:max-w-[440px] lg:max-w-[520px] mx-auto">
           <LocationSearch onSelectLocation={onSelectLocation} />
         </div>
 
-        {/* Desktop Action Buttons */}
+        {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-2.5 flex-shrink-0">
-          {/* Desktop Location Badge */}
           {location && (
-            <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 max-w-[200px] truncate">
-              <MapPin size={13} className="text-indigo-400 flex-shrink-0" />
-              <span className="text-xs text-slate-300 font-medium truncate">
-                {location.name}{location.country ? `, ${location.country}` : ''}
-              </span>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-200 text-xs font-medium text-slate-700 max-w-[200px] truncate">
+              <MapPin size={13} className="text-teal-700 flex-shrink-0" />
+              <span className="truncate">{location.name}{location.country ? `, ${location.country}` : ''}</span>
             </div>
           )}
 
           <button
-            className="btn-ghost !py-2 !px-3.5 flex items-center gap-2 rounded-xl text-xs font-semibold"
+            className="btn-secondary !py-1.5 !px-3 text-xs font-semibold rounded-lg flex items-center gap-1.5"
             onClick={onDetectLocation}
             disabled={detecting}
-            aria-label="Use my current location"
+            aria-label="Detect GPS Location"
           >
             {detecting ? (
-              <Loader size={14} className="animate-spin text-cyan-400" />
+              <Loader size={13} className="animate-spin text-teal-700" />
             ) : (
-              <Navigation size={14} className="text-cyan-400" />
+              <Navigation size={13} className="text-slate-600" />
             )}
             <span>{detecting ? 'Locating...' : 'My Location'}</span>
           </button>
 
           <button
-            className="btn-ghost !p-2.5 flex items-center justify-center rounded-xl"
+            className="btn-ghost !p-2 flex items-center justify-center rounded-lg"
             onClick={onOpenSettings}
-            aria-label="Open settings"
-            title="Settings"
+            aria-label="Open settings and about"
+            title="Platform Settings & Sources"
           >
-            <Settings size={16} className="text-slate-300" />
+            <Settings size={15} className="text-slate-600" />
           </button>
         </div>
       </div>

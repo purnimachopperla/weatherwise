@@ -1,7 +1,5 @@
 /**
- * WeatherAlerts.jsx — Modern weather warning and alert banners.
- *
- * Displays severity-coded alerts for severe conditions.
+ * WeatherAlerts.jsx — Official Meteorological & Environmental Warning Advisories.
  */
 
 import { AlertTriangle, CloudLightning, CloudRain, Thermometer, Eye, Wind, AlertCircle, Sun } from 'lucide-react';
@@ -20,9 +18,9 @@ const ICON_MAP = {
 };
 
 const SEVERITY_STYLES = {
-  danger:  { bg: 'rgba(239,68,68,0.12)',  border: 'rgba(239,68,68,0.3)',  text: '#ef4444' },
-  warning: { bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.3)', text: '#f59e0b' },
-  info:    { bg: 'rgba(6,182,212,0.12)',  border: 'rgba(6,182,212,0.3)',  text: '#06b6d4' },
+  danger:  { bg: '#fef2f2', border: '#fecaca', text: '#b91c1c', badge: '#fee2e2', label: 'CRITICAL ALERT' },
+  warning: { bg: '#fffbeb', border: '#fde68a', text: '#b45309', badge: '#fef3c7', label: 'METEOROLOGICAL WARNING' },
+  info:    { bg: '#f0fdfa', border: '#99f6e4', text: '#0f766e', badge: '#ccfbf1', label: 'ADVISORY' },
 };
 
 export default function WeatherAlerts({ alerts }) {
@@ -30,11 +28,11 @@ export default function WeatherAlerts({ alerts }) {
   if (alertList.length === 0) return null;
 
   return (
-    <section aria-label="Active Weather Alerts" className="fade-in w-full flex flex-col gap-2.5">
-      <div className="flex items-center gap-1.5 px-1">
-        <AlertTriangle size={15} className="text-amber-400" />
-        <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-          Active Weather Alerts ({alertList.length})
+    <section aria-label="Active Environmental Warnings" className="fade-in w-full flex flex-col gap-2.5">
+      <div className="flex items-center gap-1.5 px-0.5">
+        <AlertTriangle size={15} className="text-amber-600" />
+        <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+          Active Meteorological & Environmental Warnings ({alertList.length})
         </h3>
       </div>
 
@@ -45,26 +43,31 @@ export default function WeatherAlerts({ alerts }) {
         return (
           <div
             key={i}
-            className="flex items-start gap-3 p-3.5 sm:p-4 rounded-2xl border transition-all"
+            className="p-4 rounded-xl border flex items-start gap-3 transition-all"
             style={{
-              background: style.bg,
+              backgroundColor: style.bg,
               borderColor: style.border,
             }}
           >
             <div
-              className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
+              className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
               style={{
-                background: `${style.text}20`,
+                backgroundColor: style.badge,
                 color: style.text,
               }}
             >
-              <IconComponent size={17} />
+              <IconComponent size={16} />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs sm:text-sm font-bold mb-0.5 break-words" style={{ color: style.text }}>
-                {alert.title}
-              </p>
-              <p className="text-xs sm:text-[13px] text-slate-300 leading-relaxed break-words">
+              <div className="flex items-center gap-2 mb-0.5">
+                <span className="text-[10px] font-bold px-1.5 py-0.2 rounded border" style={{ borderColor: style.border, color: style.text }}>
+                  {style.label}
+                </span>
+                <p className="text-xs sm:text-sm font-bold" style={{ color: style.text }}>
+                  {alert.title}
+                </p>
+              </div>
+              <p className="text-xs text-slate-700 leading-relaxed break-words">
                 {alert.message}
               </p>
             </div>

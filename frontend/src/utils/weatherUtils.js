@@ -1,76 +1,83 @@
 /**
- * weatherUtils.js — Helper functions for the frontend.
+ * weatherUtils.js — Helper functions for the Environmental Intelligence Platform.
  *
- * These convert raw data into display-ready values
- * (icons, colors, formatted strings, etc.)
+ * Professional calculations, color tokens, and Lucide icon mappings.
  */
 
-// ─────────────────────────────────────────────
-// WMO Weather Code → Emoji + Description
-// ─────────────────────────────────────────────
-const WMO_MAP = {
-  0:  { label: 'Clear Sky',         emoji: '☀️' },
-  1:  { label: 'Mainly Clear',      emoji: '🌤️' },
-  2:  { label: 'Partly Cloudy',     emoji: '⛅' },
-  3:  { label: 'Overcast',          emoji: '☁️' },
-  45: { label: 'Foggy',             emoji: '🌫️' },
-  48: { label: 'Icy Fog',           emoji: '🌫️' },
-  51: { label: 'Light Drizzle',     emoji: '🌦️' },
-  53: { label: 'Moderate Drizzle',  emoji: '🌦️' },
-  55: { label: 'Dense Drizzle',     emoji: '🌧️' },
-  61: { label: 'Slight Rain',       emoji: '🌧️' },
-  63: { label: 'Moderate Rain',     emoji: '🌧️' },
-  65: { label: 'Heavy Rain',        emoji: '🌧️' },
-  71: { label: 'Slight Snow',       emoji: '🌨️' },
-  73: { label: 'Moderate Snow',     emoji: '❄️' },
-  75: { label: 'Heavy Snow',        emoji: '❄️' },
-  77: { label: 'Snow Grains',       emoji: '🌨️' },
-  80: { label: 'Slight Showers',    emoji: '🌦️' },
-  81: { label: 'Moderate Showers',  emoji: '🌧️' },
-  82: { label: 'Violent Showers',   emoji: '⛈️' },
-  85: { label: 'Snow Showers',      emoji: '🌨️' },
-  86: { label: 'Heavy Snow Showers',emoji: '❄️' },
-  95: { label: 'Thunderstorm',      emoji: '⛈️' },
-  96: { label: 'Thunderstorm+Hail', emoji: '⛈️' },
-  99: { label: 'Thunderstorm+Hail', emoji: '⛈️' },
+// WMO Weather Code Metadata
+export const WMO_MAP = {
+  0:  { label: 'Clear Sky',          icon: 'Sun',           severity: 'good' },
+  1:  { label: 'Mainly Clear',       icon: 'Sun',           severity: 'good' },
+  2:  { label: 'Partly Cloudy',      icon: 'CloudSun',      severity: 'good' },
+  3:  { label: 'Overcast',           icon: 'Cloud',         severity: 'moderate' },
+  45: { label: 'Foggy',              icon: 'CloudFog',      severity: 'warning' },
+  48: { label: 'Icy Fog',            icon: 'CloudFog',      severity: 'warning' },
+  51: { label: 'Light Drizzle',      icon: 'CloudDrizzle',  severity: 'moderate' },
+  53: { label: 'Moderate Drizzle',   icon: 'CloudDrizzle',  severity: 'moderate' },
+  55: { label: 'Dense Drizzle',      icon: 'CloudRain',     severity: 'warning' },
+  61: { label: 'Slight Rain',        icon: 'CloudRain',     severity: 'moderate' },
+  63: { label: 'Moderate Rain',      icon: 'CloudRain',     severity: 'warning' },
+  65: { label: 'Heavy Rain',         icon: 'CloudRain',     severity: 'danger' },
+  71: { label: 'Slight Snow',        icon: 'CloudSnow',     severity: 'warning' },
+  73: { label: 'Moderate Snow',      icon: 'CloudSnow',     severity: 'warning' },
+  75: { label: 'Heavy Snow',         icon: 'CloudSnow',     severity: 'danger' },
+  77: { label: 'Snow Grains',        icon: 'CloudSnow',     severity: 'warning' },
+  80: { label: 'Slight Showers',     icon: 'CloudDrizzle',  severity: 'moderate' },
+  81: { label: 'Moderate Showers',   icon: 'CloudRain',     severity: 'warning' },
+  82: { label: 'Violent Showers',    icon: 'CloudLightning',severity: 'danger' },
+  85: { label: 'Snow Showers',       icon: 'CloudSnow',     severity: 'warning' },
+  86: { label: 'Heavy Snow Showers', icon: 'CloudSnow',     severity: 'danger' },
+  95: { label: 'Thunderstorm',       icon: 'CloudLightning',severity: 'danger' },
+  96: { label: 'Thunderstorm + Hail',icon: 'CloudLightning',severity: 'danger' },
+  99: { label: 'Severe Thunderstorm',icon: 'CloudLightning',severity: 'danger' },
 };
 
-export function getWeatherEmoji(code) {
-  return WMO_MAP[code]?.emoji || '🌡️';
-}
-
 export function getWeatherLabel(code) {
-  return WMO_MAP[code]?.label || 'Unknown';
+  return WMO_MAP[code]?.label || 'Clear';
+}
+
+export function getWeatherIconName(code) {
+  return WMO_MAP[code]?.icon || 'Sun';
 }
 
 // ─────────────────────────────────────────────
-// AQI Colors
+// AQI European Standard Classifications
 // ─────────────────────────────────────────────
-export function getAQIColor(aqi) {
-  if (aqi == null) return '#6b7280';
-  if (aqi <= 20) return '#22c55e';
-  if (aqi <= 40) return '#84cc16';
-  if (aqi <= 60) return '#eab308';
-  if (aqi <= 80) return '#f97316';
-  if (aqi <= 100) return '#ef4444';
-  return '#7c3aed';
-}
-
 export function getAQILabel(aqi) {
-  if (aqi == null) return 'Unknown';
+  if (aqi == null) return 'Not Available';
   if (aqi <= 20) return 'Good';
   if (aqi <= 40) return 'Fair';
   if (aqi <= 60) return 'Moderate';
   if (aqi <= 80) return 'Poor';
   if (aqi <= 100) return 'Very Poor';
-  return 'Extremely Poor';
+  return 'Hazardous';
+}
+
+export function getAQIColor(aqi) {
+  if (aqi == null) return '#64748b';
+  if (aqi <= 20) return '#16a34a'; // Good (Green)
+  if (aqi <= 40) return '#0d9488'; // Fair (Teal)
+  if (aqi <= 60) return '#d97706'; // Moderate (Amber)
+  if (aqi <= 80) return '#ea580c'; // Poor (Orange)
+  if (aqi <= 100) return '#dc2626'; // Very Poor (Red)
+  return '#9333ea'; // Hazardous (Purple)
+}
+
+export function getAQIBadgeStyle(aqi) {
+  if (aqi == null) return { bg: '#f1f5f9', text: '#64748b', border: '#cbd5e1' };
+  if (aqi <= 20) return { bg: '#f0fdf4', text: '#15803d', border: '#bbf7d0' };
+  if (aqi <= 40) return { bg: '#f0fdfa', text: '#0f766e', border: '#99f6e4' };
+  if (aqi <= 60) return { bg: '#fffbeb', text: '#b45309', border: '#fde68a' };
+  if (aqi <= 80) return { bg: '#fff7ed', text: '#c2410c', border: '#fed7aa' };
+  if (aqi <= 100) return { bg: '#fef2f2', text: '#b91c1c', border: '#fecaca' };
+  return { bg: '#faf5ff', text: '#7e22ce', border: '#e9d5ff' };
 }
 
 // ─────────────────────────────────────────────
-// UV Index Labels
+// UV Index Classifications
 // ─────────────────────────────────────────────
 export function getUVLabel(uv) {
-  if (uv == null) return 'Unknown';
+  if (uv == null) return 'N/A';
   if (uv < 3) return 'Low';
   if (uv < 6) return 'Moderate';
   if (uv < 8) return 'High';
@@ -79,115 +86,128 @@ export function getUVLabel(uv) {
 }
 
 export function getUVColor(uv) {
-  if (uv == null) return '#6b7280';
-  if (uv < 3) return '#22c55e';
-  if (uv < 6) return '#eab308';
-  if (uv < 8) return '#f97316';
-  if (uv < 11) return '#ef4444';
-  return '#7c3aed';
+  if (uv == null) return '#64748b';
+  if (uv < 3) return '#16a34a';
+  if (uv < 6) return '#d97706';
+  if (uv < 8) return '#ea580c';
+  if (uv < 11) return '#dc2626';
+  return '#9333ea';
 }
 
 // ─────────────────────────────────────────────
-// Temperature Color (cold → hot)
-// ─────────────────────────────────────────────
-export function getTempColor(temp) {
-  if (temp <= 0) return '#06b6d4';
-  if (temp <= 10) return '#3b82f6';
-  if (temp <= 20) return '#10b981';
-  if (temp <= 30) return '#f59e0b';
-  if (temp <= 38) return '#f97316';
-  return '#ef4444';
-}
-
-// ─────────────────────────────────────────────
-// Wind Speed Labels (km/h)
+// Wind & Atmospheric Metrics
 // ─────────────────────────────────────────────
 export function getWindLabel(speed) {
-  if (speed < 1) return 'Calm';
-  if (speed < 6) return 'Light Air';
-  if (speed < 12) return 'Light Breeze';
-  if (speed < 20) return 'Gentle Breeze';
-  if (speed < 29) return 'Moderate Breeze';
-  if (speed < 39) return 'Fresh Breeze';
-  if (speed < 50) return 'Strong Breeze';
-  if (speed < 62) return 'Near Gale';
-  return 'Gale';
+  if (speed == null) return 'Calm';
+  if (speed < 5) return 'Calm';
+  if (speed < 20) return 'Light Breeze';
+  if (speed < 38) return 'Moderate Breeze';
+  if (speed < 62) return 'Strong Wind';
+  return 'Gale Force';
 }
 
-// ─────────────────────────────────────────────
-// Visibility Labels (metres)
-// ─────────────────────────────────────────────
-export function getVisibilityLabel(metres) {
-  if (metres == null) return 'Unknown';
-  const km = metres / 1000;
-  if (km >= 10) return 'Excellent';
-  if (km >= 5) return 'Good';
-  if (km >= 2) return 'Moderate';
-  if (km >= 1) return 'Poor';
-  return 'Very Poor';
-}
-
-export function formatVisibility(metres) {
-  if (metres == null) return 'N/A';
-  const km = metres / 1000;
-  if (km >= 1) return `${km.toFixed(1)} km`;
-  return `${metres} m`;
-}
-
-// ─────────────────────────────────────────────
-// Time Formatting
-// ─────────────────────────────────────────────
-export function formatHour(isoString) {
-  try {
-    const d = new Date(isoString);
-    return d.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
-  } catch {
-    return isoString;
-  }
-}
-
-export function formatDate(dateString) {
-  try {
-    const d = new Date(dateString + 'T00:00:00');
-    return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-  } catch {
-    return dateString;
-  }
-}
-
-// ─────────────────────────────────────────────
-// Severity Colors for Recommendation Cards
-// ─────────────────────────────────────────────
-export function getSeverityStyle(severity) {
-  const map = {
-    good:     { bg: 'rgba(16,185,129,0.1)',  border: 'rgba(16,185,129,0.3)',  text: '#10b981' },
-    moderate: { bg: 'rgba(245,158,11,0.1)',  border: 'rgba(245,158,11,0.3)',  text: '#f59e0b' },
-    warning:  { bg: 'rgba(249,115,22,0.1)',  border: 'rgba(249,115,22,0.3)',  text: '#f97316' },
-    danger:   { bg: 'rgba(239,68,68,0.1)',   border: 'rgba(239,68,68,0.3)',   text: '#ef4444' },
-  };
-  return map[severity] || map.moderate;
-}
-
-// ─────────────────────────────────────────────
-// Generate a stable session ID for the browser
-// ─────────────────────────────────────────────
-export function getOrCreateSessionId() {
-  const key = 'ww_session_id';
-  let id = localStorage.getItem(key);
-  if (!id) {
-    id = `session_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
-    localStorage.setItem(key, id);
-  }
-  return id;
-}
-
-// ─────────────────────────────────────────────
-// Humidity Comfort Label
-// ─────────────────────────────────────────────
-export function getHumidityLabel(humidity) {
-  if (humidity < 30) return 'Very Dry';
-  if (humidity < 50) return 'Comfortable';
-  if (humidity < 70) return 'Moderate';
-  if (humidity < 85) return 'Humid';
+export function getHumidityLabel(h) {
+  if (h == null) return 'Normal';
+  if (h < 30) return 'Dry';
+  if (h <= 60) return 'Optimal';
+  if (h <= 75) return 'Humid';
   return 'Very Humid';
+}
+
+export function formatVisibility(meters) {
+  if (meters == null) return 'N/A';
+  if (meters >= 1000) return `${(meters / 1000).toFixed(1)} km`;
+  return `${Math.round(meters)} m`;
+}
+
+export function getVisibilityLabel(meters) {
+  if (meters == null) return 'Clear';
+  if (meters >= 10000) return 'Excellent';
+  if (meters >= 5000) return 'Good';
+  if (meters >= 2000) return 'Moderate';
+  return 'Poor (Fog/Haze)';
+}
+
+export function formatHour(isoString) {
+  if (!isoString) return '';
+  const date = new Date(isoString);
+  return date.toLocaleTimeString([], { hour: 'numeric', hour12: true });
+}
+
+export function getTempColor(t) {
+  if (t == null) return '#0f766e';
+  if (t <= 5) return '#0284c7';
+  if (t <= 18) return '#0d9488';
+  if (t <= 28) return '#16a34a';
+  if (t <= 36) return '#d97706';
+  return '#dc2626';
+}
+
+export function getSeverityStyle(sev) {
+  switch (sev) {
+    case 'danger':
+      return { bg: '#fef2f2', border: '#fecaca', text: '#b91c1c', badge: '#fee2e2' };
+    case 'warning':
+      return { bg: '#fffbeb', border: '#fde68a', text: '#b45309', badge: '#fef3c7' };
+    case 'moderate':
+      return { bg: '#f0fdfa', border: '#99f6e4', text: '#0f766e', badge: '#ccfbf1' };
+    case 'good':
+    default:
+      return { bg: '#f0fdf4', border: '#bbf7d0', text: '#15803d', badge: '#dcfce7' };
+  }
+}
+
+// ─────────────────────────────────────────────
+// SIH Environmental Safety & Decision Index
+// ─────────────────────────────────────────────
+export function calculateEnvironmentalSafety(weather, airQuality) {
+  if (!weather?.current) {
+    return { score: 85, level: 'LOW', statusText: 'Environmental conditions are favorable.' };
+  }
+
+  const current = weather.current;
+  const aqi = airQuality?.aqi ?? 35;
+  const uv = airQuality?.uv_index ?? 3;
+  const rainProb = weather.daily?.[0]?.rain_probability ?? 10;
+  const temp = current.temperature;
+
+  let score = 100;
+
+  // AQI Impact (up to -40 points)
+  score -= Math.min((aqi / 150) * 40, 40);
+
+  // UV Impact (up to -20 points)
+  if (uv > 5) {
+    score -= Math.min((uv - 5) * 4, 20);
+  }
+
+  // Rain & Severe Weather Impact (up to -20 points)
+  score -= Math.min((rainProb / 100) * 20, 20);
+
+  // Thermal Discomfort Impact
+  if (temp > 36) score -= Math.min((temp - 36) * 3, 15);
+  if (temp < 8) score -= Math.min((8 - temp) * 2, 15);
+
+  const finalScore = Math.max(15, Math.min(100, Math.round(score)));
+
+  let level = 'LOW';
+  let statusText = 'Environmental conditions are optimal for general outdoor operations.';
+  let badgeColor = '#16a34a';
+
+  if (finalScore < 50) {
+    level = 'HIGH';
+    statusText = 'Adverse environmental conditions. Exercise precaution for prolonged outdoor exposure.';
+    badgeColor = '#dc2626';
+  } else if (finalScore < 75) {
+    level = 'MODERATE';
+    statusText = 'Moderate environmental parameters. Sensitive individuals should monitor conditions.';
+    badgeColor = '#d97706';
+  }
+
+  return {
+    score: finalScore,
+    level,
+    statusText,
+    badgeColor,
+  };
 }

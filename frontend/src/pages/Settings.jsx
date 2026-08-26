@@ -1,95 +1,96 @@
 /**
- * Settings.jsx — Responsive Application settings modal.
+ * Settings.jsx — Platform Architecture & Documentation Modal.
  *
- * Fully responsive:
- * - Fits any mobile screen without clipping
- * - Scrollable body on small screens
- * - Easy-to-tap close buttons (min 44px)
+ * Professional presentation for Smart India Hackathon evaluators.
  */
 
-import { X } from 'lucide-react';
+import { X, ShieldCheck, Database, Layers, CheckCircle2 } from 'lucide-react';
 
 export default function Settings({ onClose }) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-3 sm:p-4 fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-3.5 sm:p-4 fade-in"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div
-        className="w-full max-w-lg bg-slate-900/95 border border-indigo-500/30 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl shadow-black/90 flex flex-col max-h-[90vh]"
+        className="w-full max-w-xl bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-indigo-500/15 flex-shrink-0">
-          <h2 className="text-base sm:text-lg font-bold text-slate-100">About & Settings</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50 flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <ShieldCheck size={18} className="text-teal-700" />
+            <h2 className="text-base font-bold text-slate-900">Platform Architecture & Data Sources</h2>
+          </div>
           <button
             onClick={onClose}
-            aria-label="Close settings"
-            className="w-9 h-9 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 active:bg-indigo-500/30 text-slate-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+            aria-label="Close modal"
+            className="w-8 h-8 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition-colors cursor-pointer"
           >
-            <X size={18} />
+            <X size={16} />
           </button>
         </div>
 
-        {/* Scrollable Content */}
-        <div className="p-4 sm:p-6 overflow-y-auto space-y-5 flex-1">
-          {/* About */}
+        {/* Scrollable Body */}
+        <div className="p-6 overflow-y-auto space-y-6 flex-1 text-xs sm:text-sm">
+          {/* Project Summary */}
           <section>
-            <h3 className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-wider mb-2 sm:mb-3">
-              Application
+            <h3 className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">
+              Smart India Hackathon Innovation
             </h3>
-            <div className="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20">
-              <div className="flex items-center gap-3 mb-2.5">
-                <span className="text-3xl">🌤️</span>
+            <div className="p-4 rounded-xl bg-teal-50/60 border border-teal-200">
+              <div className="flex items-center gap-2.5 mb-2">
+                <div className="w-8 h-8 rounded-lg bg-teal-700 text-white flex items-center justify-center font-bold">
+                  WW
+                </div>
                 <div>
-                  <p className="text-base font-bold text-slate-100">WeatherWise</p>
-                  <p className="text-xs text-cyan-300 font-medium">Smart Weather & Environment Assistant v1.0.0</p>
+                  <p className="font-bold text-slate-900">WeatherWise</p>
+                  <p className="text-xs text-teal-800 font-medium">Environmental Decision Intelligence Platform v2.0</p>
                 </div>
               </div>
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                WeatherWise doesn't just show weather numbers — it analyzes real-time meteorological conditions
-                and generates personalized recommendations tailored to 8 lifestyle personas.
+              <p className="text-slate-700 text-xs leading-relaxed">
+                WeatherWise fuses real-time meteorological metrics with multi-pollutant Air Quality Telemetry to power an automated Decision Support Engine tailored for 8 domain-specific stakeholder personas.
               </p>
             </div>
           </section>
 
-          {/* Data Sources */}
+          {/* Live Data Sources */}
           <section>
-            <h3 className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-wider mb-2 sm:mb-3">
-              Live Data Sources
+            <h3 className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2.5">
+              Live Environmental Telemetry Feeds
             </h3>
-            <div className="flex flex-col gap-2">
+            <div className="space-y-2">
               {[
-                { name: 'Weather & Forecast', source: 'Open-Meteo API', free: true },
-                { name: 'Air Quality (AQI)', source: 'Open-Meteo Air Quality API', free: true },
-                { name: 'Location Search', source: 'Open-Meteo Geocoding API', free: true },
-                { name: 'Reverse Geocoding', source: 'OpenStreetMap Nominatim', free: true },
+                { name: 'Meteorological & 7-Day Forecast', source: 'Open-Meteo High-Resolution NWP API', protocol: 'REST / JSON' },
+                { name: 'Atmospheric Air Quality & Pollutants (AQI, PM2.5, PM10, O3, NO2)', source: 'Copernicus Atmosphere Service (CAMS) via Open-Meteo', protocol: 'REST / Continuous' },
+                { name: 'Global Geocoding & Regional Telemetry Stations', source: 'Open-Meteo Geocoding Engine', protocol: 'Geospatial Index' },
+                { name: 'Reverse Spatial Geocoding', source: 'OpenStreetMap Nominatim Engine', protocol: 'Spatial Lat/Lon' },
               ].map((item) => (
                 <div
                   key={item.name}
-                  className="flex items-center justify-between gap-2 p-3 rounded-xl bg-slate-950/60 border border-indigo-500/10"
+                  className="flex items-center justify-between gap-3 p-3 rounded-lg bg-slate-50 border border-slate-200"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs sm:text-sm font-semibold text-slate-200 break-words">{item.name}</p>
+                    <p className="text-xs font-semibold text-slate-900 break-words">{item.name}</p>
                     <p className="text-[11px] text-slate-500 break-words">{item.source}</p>
                   </div>
-                  <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md flex-shrink-0">
-                    LIVE & FREE
+                  <span className="text-[10px] font-bold text-teal-800 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded-md flex-shrink-0">
+                    {item.protocol}
                   </span>
                 </div>
               ))}
             </div>
           </section>
 
-          {/* Tech Stack */}
+          {/* Technology Architecture */}
           <section>
-            <h3 className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-wider mb-2 sm:mb-3">
-              Full-Stack Architecture
+            <h3 className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">
+              Full-Stack System Architecture
             </h3>
-            <div className="flex flex-wrap gap-1.5 sm:gap-2">
-              {['React 18', 'Vite', 'Tailwind CSS', 'Recharts', 'FastAPI', 'Python 3.11', 'SQLite', 'Open-Meteo'].map((tech) => (
+            <div className="flex flex-wrap gap-2">
+              {['FastAPI Microservice', 'Python 3.11', 'React 18', 'Vite 8', 'Tailwind CSS', 'Recharts Telemetry', 'SQLite / PostgreSQL', 'CORS Security Regex'].map((tech) => (
                 <span
                   key={tech}
-                  className="text-xs font-semibold text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-lg"
+                  className="text-xs font-medium text-slate-700 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-md"
                 >
                   {tech}
                 </span>
@@ -99,11 +100,8 @@ export default function Settings({ onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="px-5 sm:px-6 py-3.5 border-t border-indigo-500/15 flex justify-end bg-slate-950/50 flex-shrink-0">
-          <button
-            className="btn-primary !py-2 !px-5 text-xs sm:text-sm rounded-xl font-bold"
-            onClick={onClose}
-          >
+        <div className="px-6 py-3.5 border-t border-slate-200 flex justify-end bg-slate-50 flex-shrink-0">
+          <button className="btn-primary" onClick={onClose}>
             Done
           </button>
         </div>
@@ -111,4 +109,3 @@ export default function Settings({ onClose }) {
     </div>
   );
 }
-

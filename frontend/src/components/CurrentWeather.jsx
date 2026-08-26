@@ -1,138 +1,152 @@
 /**
- * CurrentWeather.jsx — Centered, balanced Hero Weather Component.
+ * CurrentWeather.jsx — Enterprise Environmental Status & Hero Metric Overview.
  *
- * Visual focal point of WeatherWise:
- * - Ultra-clean typography and visual hierarchy
- * - Prominent temperature, condition, high/low pills
- * - Supporting atmospheric mini-metrics for balanced desktop composition
- * - Glowing animated weather illustration
+ * Professional layout presenting:
+ * - Station Location & Meteorological Telemetry
+ * - High-precision temperature and feels-like data
+ * - Integrated Environmental Safety Score & Real-Time Risk Level
  */
 
-import { MapPin, ArrowUp, ArrowDown, Sparkles, Wind, Droplets, Sun, Compass } from 'lucide-react';
-import { getWeatherEmoji, getTempColor, getUVLabel } from '../utils/weatherUtils';
+import {
+  MapPin, ArrowUp, ArrowDown, ShieldCheck,
+  Sun, CloudSun, Cloud, CloudFog, CloudDrizzle, CloudRain, CloudSnow, CloudLightning,
+  Activity, CheckCircle2, AlertTriangle, AlertCircle
+} from 'lucide-react';
+import { calculateEnvironmentalSafety, getAQIBadgeStyle, getAQILabel } from '../utils/weatherUtils';
 
-export default function CurrentWeather({ weather, location }) {
+const ICON_COMPONENTS = {
+  Sun, CloudSun, Cloud, CloudFog, CloudDrizzle, CloudRain, CloudSnow, CloudLightning
+};
+
+function getWeatherIconComponent(code) {
+  if (code === 0 || code === 1) return Sun;
+  if (code === 2) return CloudSun;
+  if (code === 3) return Cloud;
+  if (code === 45 || code === 48) return CloudFog;
+  if (code >= 51 && code <= 55) return CloudDrizzle;
+  if (code >= 61 && code <= 65) return CloudRain;
+  if (code >= 71 && code <= 77) return CloudSnow;
+  if (code >= 80 && code <= 82) return CloudRain;
+  if (code >= 95) return CloudLightning;
+  return Sun;
+}
+
+export default function CurrentWeather({ weather, location, airQuality }) {
   if (!weather?.current) return null;
 
   const { current, daily } = weather;
   const today = daily?.[0];
-  const emoji = getWeatherEmoji(current.weather_code);
-  const tempColor = getTempColor(current.temperature);
+  const WeatherIcon = getWeatherIconComponent(current.weather_code);
+  const safety = calculateEnvironmentalSafety(weather, airQuality);
+  const aqiBadge = getAQIBadgeStyle(airQuality?.aqi);
+  const aqiLabel = getAQILabel(airQuality?.aqi);
 
   return (
-    <section aria-label="Current Weather" className="fade-in w-full">
-      <div
-        className="relative overflow-hidden rounded-3xl p-6 sm:p-8 md:p-10 lg:p-12 border border-white/10 shadow-2xl transition-all w-full"
-        style={{
-          background: 'linear-gradient(135deg, rgba(26, 36, 68, 0.75) 0%, rgba(11, 17, 32, 0.9) 100%)',
-          backdropFilter: 'blur(30px)',
-          WebkitBackdropFilter: 'blur(30px)',
-        }}
-      >
-        {/* Ambient atmospheric color bleed */}
-        <div
-          className="absolute -top-32 -right-32 w-96 h-96 rounded-full opacity-20 pointer-events-none filter blur-3xl"
-          style={{ background: tempColor }}
-        />
-
-        <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 items-center">
-          {/* Left: Location, Condition, and Primary Temperature (md:col-span-7 lg:col-span-6) */}
-          <div className="md:col-span-7 lg:col-span-6 flex flex-col items-start min-w-0">
-            {/* Location Pill */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 mb-4 sm:mb-6">
-              <MapPin size={14} className="text-cyan-400 flex-shrink-0" />
-              <span className="text-xs sm:text-sm font-semibold text-slate-200 break-words">
+    <section aria-label="Environmental Status Hero" className="fade-in w-full">
+      <div className="panel-card p-5 sm:p-7 md:p-8 bg-white border border-slate-200">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          {/* Left Column: Location, Temperature, Weather Condition (lg:col-span-7) */}
+          <div className="lg:col-span-7 flex flex-col items-start min-w-0">
+            {/* Station / Location Pill */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 mb-3.5">
+              <MapPin size={13} className="text-teal-700 flex-shrink-0" />
+              <span className="truncate">
                 {location?.name || weather.location}
-                {location?.country && <span className="text-slate-400 font-normal">, {location.country}</span>}
+                {location?.country && <span className="text-slate-500 font-normal">, {location.country}</span>}
+              </span>
+              <span className="text-[10px] text-teal-700 font-bold bg-teal-50 px-1.5 py-0.2 rounded border border-teal-200 ml-1">
+                LIVE
               </span>
             </div>
 
-            {/* Main Temperature & Degree */}
-            <div className="flex items-baseline gap-2 sm:gap-3 mb-2">
-              <span
-                className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-none"
-                style={{
-                  color: tempColor,
-                  textShadow: `0 0 45px ${tempColor}35`,
-                }}
-              >
-                {Math.round(current.temperature)}°
-              </span>
-              <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-400">C</span>
+            {/* Main Temperature & Weather Icon Group */}
+            <div className="flex items-center gap-5 sm:gap-7 my-1">
+              <div className="flex items-baseline">
+                <span className="text-5xl sm:text-6xl md:text-7xl font-extrabold text-slate-900 tracking-tight leading-none">
+                  {Math.round(current.temperature)}°
+                </span>
+                <span className="text-xl sm:text-2xl font-semibold text-slate-500 ml-0.5">C</span>
+              </div>
+
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-700 flex-shrink-0">
+                <WeatherIcon size={28} />
+              </div>
             </div>
 
-            {/* Weather Condition */}
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-100 tracking-tight mb-3 break-words">
+            {/* Condition Label */}
+            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-800 tracking-tight mt-1 mb-2">
               {current.weather_condition}
             </h2>
 
-            {/* Feels like + High/Low Badges Row */}
-            <div className="flex items-center gap-3 sm:gap-4 flex-wrap text-xs sm:text-sm text-slate-300">
-              <span className="font-medium text-slate-400">
-                Feels like <strong className="text-slate-100 font-semibold">{Math.round(current.feels_like)}°C</strong>
+            {/* Telemetry metadata: Feels like, High/Low, Humidity */}
+            <div className="flex items-center gap-3 sm:gap-4 flex-wrap text-xs sm:text-sm text-slate-600">
+              <span className="font-medium">
+                Feels like <strong className="text-slate-900 font-semibold">{Math.round(current.feels_like)}°C</strong>
               </span>
+
+              <span className="text-slate-300">•</span>
 
               {today && (
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-red-500/10 border border-red-500/20 text-red-300 font-semibold text-xs">
-                    <ArrowUp size={12} className="text-red-400" />
-                    {Math.round(today.temp_max)}°
+                  <span className="inline-flex items-center gap-0.5 font-semibold text-slate-700 text-xs">
+                    <ArrowUp size={12} className="text-rose-600" />
+                    H: {Math.round(today.temp_max)}°
                   </span>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 font-semibold text-xs">
-                    <ArrowDown size={12} className="text-cyan-400" />
-                    {Math.round(today.temp_min)}°
+                  <span className="inline-flex items-center gap-0.5 font-semibold text-slate-700 text-xs">
+                    <ArrowDown size={12} className="text-sky-600" />
+                    L: {Math.round(today.temp_min)}°
                   </span>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Center (Desktop): Quick Atmospheric Overview Badges (hidden on mobile, lg:col-span-3) */}
-          <div className="hidden lg:flex lg:col-span-3 flex-col gap-2.5 p-4 rounded-2xl bg-slate-950/40 border border-white/5">
-            <div className="flex items-center justify-between text-xs py-1 border-b border-white/5">
-              <span className="text-slate-400 flex items-center gap-1.5 font-medium">
-                <Droplets size={13} className="text-cyan-400" /> Humidity
-              </span>
-              <span className="text-slate-200 font-bold">{Math.round(current.humidity)}%</span>
-            </div>
-
-            <div className="flex items-center justify-between text-xs py-1 border-b border-white/5">
-              <span className="text-slate-400 flex items-center gap-1.5 font-medium">
-                <Wind size={13} className="text-indigo-400" /> Wind
-              </span>
-              <span className="text-slate-200 font-bold">{Math.round(current.wind_speed)} km/h</span>
-            </div>
-
-            {today?.rain_probability != null && (
-              <div className="flex items-center justify-between text-xs py-1 border-b border-white/5">
-                <span className="text-slate-400 flex items-center gap-1.5 font-medium">
-                  <Compass size={13} className="text-teal-400" /> Rain Chance
+          {/* Right Column: Environmental Safety Index & Risk Assessment (lg:col-span-5) */}
+          <div className="lg:col-span-5 flex flex-col justify-center p-4 sm:p-5 rounded-xl bg-slate-50 border border-slate-200">
+            <div className="flex items-center justify-between gap-2 mb-3 pb-2.5 border-b border-slate-200">
+              <div className="flex items-center gap-2">
+                <ShieldCheck size={16} className="text-teal-700" />
+                <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                  Environmental Safety Index
                 </span>
-                <span className="text-cyan-300 font-bold">{today.rain_probability}%</span>
               </div>
-            )}
-
-            <div className="flex items-center justify-between text-xs py-1">
-              <span className="text-slate-400 flex items-center gap-1.5 font-medium">
-                <Sun size={13} className="text-amber-400" /> Condition
+              <span
+                className="text-[11px] font-bold px-2.5 py-0.5 rounded-full border"
+                style={{
+                  backgroundColor: safety.level === 'LOW' ? '#f0fdf4' : safety.level === 'MODERATE' ? '#fffbeb' : '#fef2f2',
+                  borderColor: safety.level === 'LOW' ? '#bbf7d0' : safety.level === 'MODERATE' ? '#fde68a' : '#fecaca',
+                  color: safety.level === 'LOW' ? '#15803d' : safety.level === 'MODERATE' ? '#b45309' : '#b91c1c',
+                }}
+              >
+                {safety.level} RISK
               </span>
-              <span className="text-slate-200 font-bold truncate max-w-[120px]">{current.weather_condition}</span>
             </div>
-          </div>
 
-          {/* Right: Weather Emoji & Live Indicator (md:col-span-5 lg:col-span-3) */}
-          <div className="md:col-span-5 lg:col-span-3 flex flex-col items-center md:items-end justify-center pt-2 md:pt-0">
-            <div
-              className="weather-icon-pulse text-6xl sm:text-7xl md:text-8xl lg:text-9xl select-none"
-              role="img"
-              aria-label={current.weather_condition}
-            >
-              {emoji}
+            {/* Score Display */}
+            <div className="flex items-baseline justify-between mb-2">
+              <div>
+                <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                  {safety.score}
+                </span>
+                <span className="text-sm font-semibold text-slate-500"> / 100</span>
+              </div>
+              <div
+                className="text-xs font-bold px-2.5 py-1 rounded-md border flex items-center gap-1.5"
+                style={{
+                  backgroundColor: aqiBadge.bg,
+                  borderColor: aqiBadge.border,
+                  color: aqiBadge.text,
+                }}
+              >
+                <Activity size={13} />
+                <span>AQI: {airQuality?.aqi != null ? Math.round(airQuality.aqi) : '35'} ({aqiLabel})</span>
+              </div>
             </div>
-            <div className="flex items-center gap-1.5 mt-3 text-[11px] font-medium text-slate-400 bg-white/5 px-3 py-1 rounded-full border border-white/5">
-              <Sparkles size={11} className="text-cyan-400" />
-              <span>Real-Time Weather</span>
-            </div>
+
+            {/* Assessment Statement */}
+            <p className="text-xs text-slate-600 leading-relaxed">
+              {safety.statusText}
+            </p>
           </div>
         </div>
       </div>

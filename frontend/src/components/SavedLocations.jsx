@@ -1,13 +1,10 @@
 /**
- * SavedLocations.jsx — Sleek quick-switch saved locations strip.
+ * SavedLocations.jsx — Monitored Telemetry Stations & Saved Regions.
  *
- * Visual Features:
- * - One-tap location switcher
- * - Modern capsule pills / tiles
- * - Clear active city indicator
+ * Professional station list with quick-switch capability.
  */
 
-import { MapPin, Plus, X, Bookmark } from 'lucide-react';
+import { MapPin, Plus, X, Bookmark, Radio } from 'lucide-react';
 
 export default function SavedLocations({
   savedLocations,
@@ -23,42 +20,42 @@ export default function SavedLocations({
   );
 
   return (
-    <section aria-label="Saved Locations" className="fade-in w-full">
-      <div className="glass-panel p-5 sm:p-6 rounded-3xl border border-white/5">
+    <section aria-label="Monitored Stations" className="fade-in w-full">
+      <div className="panel-card p-5 sm:p-6 bg-white border border-slate-200">
         {/* Header */}
-        <div className="flex items-center justify-between gap-3 mb-4">
+        <div className="flex items-center justify-between gap-3 mb-4 pb-2 border-b border-slate-100">
           <div className="flex items-center gap-2">
-            <Bookmark size={16} className="text-cyan-400" />
-            <h3 className="text-xs sm:text-sm font-bold text-slate-300 uppercase tracking-wider">
-              Saved Locations
+            <Radio size={16} className="text-teal-700" />
+            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+              Monitored Telemetry Stations ({savedLocations.length})
             </h3>
           </div>
 
           {currentLocation && !isCurrentSaved && (
             <button
-              className="btn-ghost !py-1.5 !px-3 text-xs font-semibold rounded-xl"
+              className="btn-secondary !py-1.5 !px-3 text-xs font-semibold rounded-lg flex items-center gap-1"
               onClick={onSaveCurrentLocation}
               title={`Save ${currentLocation.name}`}
             >
               <Plus size={13} />
-              <span>Save Current</span>
+              <span>Add Current Station</span>
             </button>
           )}
         </div>
 
-        {/* Location List */}
+        {/* Stations Grid */}
         {savedLocations.length === 0 ? (
-          <div className="text-center py-6 px-4 bg-slate-950/40 rounded-2xl border border-white/5">
-            <Bookmark size={22} className="text-slate-600 mx-auto mb-2" />
-            <p className="text-xs sm:text-sm text-slate-300 font-medium">
-              No saved locations yet
+          <div className="text-center py-6 px-4 bg-slate-50 rounded-xl border border-slate-200">
+            <Radio size={22} className="text-slate-400 mx-auto mb-2 opacity-70" />
+            <p className="text-xs sm:text-sm text-slate-700 font-medium">
+              No custom monitoring stations configured
             </p>
             <p className="text-[11px] text-slate-500 mt-0.5">
-              Search any city and click "Save Current"
+              Search any regional location and click "Add Current Station" to monitor telemetry.
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {savedLocations.map((loc) => {
               const isActive =
                 Math.abs(loc.latitude - (currentLocation?.latitude || 0)) < 0.01 &&
@@ -67,23 +64,23 @@ export default function SavedLocations({
               return (
                 <div
                   key={loc.id}
-                  className={`flex items-center justify-between gap-2 p-2.5 rounded-2xl border transition-all ${
+                  className={`flex items-center justify-between gap-2 p-3 rounded-xl border transition-all ${
                     isActive
-                      ? 'bg-indigo-500/20 border-indigo-500/40 shadow-sm shadow-indigo-500/20'
-                      : 'bg-slate-950/60 border-white/5 hover:border-white/15'
+                      ? 'bg-teal-50 border-teal-300 shadow-2xs'
+                      : 'bg-slate-50/70 border-slate-200 hover:bg-slate-50'
                   }`}
                 >
                   {/* Select button */}
                   <button
                     onClick={() => onSelectLocation(loc)}
-                    className="flex-1 flex items-center gap-2.5 min-h-[38px] px-1 text-left cursor-pointer min-w-0"
+                    className="flex-1 flex items-center gap-2.5 text-left cursor-pointer min-w-0"
                     aria-label={`Switch to ${loc.name}`}
                   >
-                    <div className={`w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0 ${isActive ? 'bg-indigo-500/30 text-cyan-300' : 'bg-slate-900 text-slate-400'}`}>
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${isActive ? 'bg-teal-700 text-white' : 'bg-slate-200 text-slate-600'}`}>
                       <MapPin size={13} />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className={`text-xs sm:text-sm truncate ${isActive ? 'text-slate-100 font-bold' : 'text-slate-300 font-semibold'}`}>
+                      <p className={`text-xs font-semibold truncate ${isActive ? 'text-teal-950 font-bold' : 'text-slate-800'}`}>
                         {loc.name}
                       </p>
                       {loc.country && (
@@ -91,8 +88,8 @@ export default function SavedLocations({
                       )}
                     </div>
                     {isActive && (
-                      <span className="text-[9px] text-cyan-300 font-bold px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 flex-shrink-0">
-                        Active
+                      <span className="text-[9px] text-teal-800 font-bold px-1.5 py-0.5 rounded bg-teal-100/80 border border-teal-300 flex-shrink-0">
+                        ACTIVE
                       </span>
                     )}
                   </button>
@@ -101,8 +98,8 @@ export default function SavedLocations({
                   <button
                     onClick={() => onRemoveLocation(loc.id)}
                     aria-label={`Remove ${loc.name}`}
-                    className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 active:bg-red-500/20 transition-colors flex-shrink-0 cursor-pointer"
-                    title="Remove location"
+                    className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors flex-shrink-0 cursor-pointer"
+                    title="Remove station"
                   >
                     <X size={14} />
                   </button>
