@@ -205,7 +205,7 @@ export default function Dashboard({ onOpenSettings }) {
 
   // ── Render ────────────────────────────────────────────
   return (
-    <div className="min-h-screen relative overflow-x-hidden">
+    <div className="app-shell">
       {/* Background ambient orbs */}
       <div className="bg-orb bg-orb-1" />
       <div className="bg-orb bg-orb-2" />
@@ -220,7 +220,7 @@ export default function Dashboard({ onOpenSettings }) {
       />
 
       {/* Main content stream */}
-      <main className="w-full max-w-[1280px] mx-auto px-3.5 sm:px-6 lg:px-8 py-5 sm:py-7 pb-20 space-y-6 sm:space-y-7">
+      <main className="dashboard-container py-6 sm:py-8 pb-20 space-y-6 sm:space-y-8">
         {/* Geolocation error banner */}
         {locationError && (
           <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs sm:text-sm fade-in">
@@ -286,7 +286,7 @@ export default function Dashboard({ onOpenSettings }) {
             <HourlyForecast weather={weather} />
 
             {/* 7. Two-Column Split: 7-Day Forecast & (AQI + Charts) */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 items-stretch">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
               {/* Left Column: 7-Day Forecast */}
               <div className="flex flex-col">
                 <Forecast weather={weather} />

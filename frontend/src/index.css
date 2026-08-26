@@ -34,14 +34,13 @@
   --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(99, 102, 241, 0.02) 100%);
   --gradient-blue: linear-gradient(135deg, #6366f1, #06b6d4);
   --gradient-purple: linear-gradient(135deg, #8b5cf6, #ec4899);
-  --gradient-glow: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(99, 102, 241, 0.08), transparent 40%);
 
   /* Shadows */
-  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  --shadow-card: 0 4px 24px -2px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.06);
   --shadow-glow: 0 0 35px -5px rgba(99, 102, 241, 0.25);
 
   /* Radius & Transitions */
-  --radius-card: 20px;
+  --radius-card: 22px;
   --radius-sm: 10px;
   --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -82,6 +81,49 @@ body {
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
+  align-items: stretch;
+}
+
+/* ─────────────────────────────────────────────
+   Application Layout Shell & Centered Container
+───────────────────────────────────────────── */
+.app-shell {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.dashboard-container {
+  width: min(100% - 28px, 1440px);
+  margin-inline: auto;
+}
+
+@media (min-width: 640px) {
+  .dashboard-container {
+    width: min(100% - 40px, 1440px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-container {
+    width: min(100% - 56px, 1500px);
+  }
+}
+
+@media (min-width: 1440px) {
+  .dashboard-container {
+    width: min(100% - 72px, 1560px);
+  }
+}
+
+@media (min-width: 1920px) {
+  .dashboard-container {
+    width: min(100% - 96px, 1640px);
+  }
 }
 
 /* ─────────────────────────────────────────────
@@ -159,7 +201,7 @@ body {
 .bg-orb {
   position: fixed;
   border-radius: 50%;
-  filter: blur(90px);
+  filter: blur(100px);
   opacity: 0.12;
   pointer-events: none;
   z-index: 0;
@@ -167,17 +209,17 @@ body {
 }
 
 .bg-orb-1 {
-  width: 650px;
-  height: 650px;
+  width: 700px;
+  height: 700px;
   background: radial-gradient(circle, #6366f1, transparent 70%);
   top: -200px;
-  left: 20%;
+  left: 25%;
   animation-delay: 0s;
 }
 
 .bg-orb-2 {
-  width: 500px;
-  height: 500px;
+  width: 550px;
+  height: 550px;
   background: radial-gradient(circle, #06b6d4, transparent 70%);
   top: 40%;
   right: -150px;

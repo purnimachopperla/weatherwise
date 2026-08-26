@@ -99,7 +99,7 @@ export default function LocationSearch({ onSelectLocation, placeholder = 'Search
   };
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-full md:max-w-[420px] mx-auto md:mx-0">
+    <div ref={containerRef} className="relative w-full">
       {/* Search Input Box */}
       <div
         className="flex items-center gap-2.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full bg-slate-900/90 border border-indigo-500/30 hover:border-indigo-500/50 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-500/20 transition-all duration-200 shadow-inner"

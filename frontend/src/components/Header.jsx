@@ -1,9 +1,9 @@
 /**
- * Header.jsx — Responsive App navigation header.
+ * Header.jsx — Centered, balanced application navigation bar.
  *
  * Fully responsive:
- * - Desktop: Sleek single-row layout
- * - Tablet/Mobile: Adaptive 2-row layout with full-width search and comfortable touch targets
+ * - Desktop (1024px to 1920px+): Sleek single-row layout with centered search bar
+ * - Mobile/Tablet: Clean 2-row layout with full-width search and comfortable touch targets
  */
 
 import { Navigation, Loader, MapPin, Settings } from 'lucide-react';
@@ -11,16 +11,14 @@ import LocationSearch from './LocationSearch';
 
 export default function Header({ location, onSelectLocation, onDetectLocation, detecting, onOpenSettings }) {
   return (
-    <header
-      className="sticky top-0 z-50 px-3 sm:px-6 py-2.5 sm:py-3 border-b border-indigo-500/20 bg-slate-950/90 backdrop-blur-xl"
-    >
-      <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row md:items-center gap-2.5 sm:gap-4">
+    <header className="sticky top-0 z-50 w-full border-b border-indigo-500/20 bg-slate-950/90 backdrop-blur-xl py-2.5 sm:py-3">
+      <div className="dashboard-container flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
         {/* Top bar on mobile / Left group on desktop */}
-        <div className="flex items-center justify-between gap-2 sm:gap-4 w-full md:w-auto">
+        <div className="flex items-center justify-between gap-3 sm:gap-4 flex-shrink-0">
           {/* Logo */}
-          <div className="flex items-center gap-2 sm:gap-2.5 flex-shrink-0">
+          <div className="flex items-center gap-2.5 flex-shrink-0">
             <div
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center text-base sm:text-lg shadow-md shadow-indigo-500/20"
+              className="w-9 h-9 rounded-2xl flex items-center justify-center text-lg shadow-md shadow-indigo-500/25"
               style={{ background: 'linear-gradient(135deg, #6366f1, #06b6d4)' }}
             >
               🌤️
@@ -35,9 +33,9 @@ export default function Header({ location, onSelectLocation, onDetectLocation, d
             </div>
           </div>
 
-          {/* Current Location Badge (tablet / mobile top right or next to logo) */}
+          {/* Current Location Badge (tablet/mobile) */}
           {location && (
-            <div className="hidden sm:flex md:hidden lg:flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex-shrink-0 max-w-[200px] truncate">
+            <div className="hidden sm:flex md:hidden items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex-shrink-0 max-w-[200px] truncate">
               <MapPin size={12} className="text-indigo-400 flex-shrink-0" />
               <span className="text-xs text-slate-300 font-medium truncate">
                 {location.name}{location.country ? `, ${location.country}` : ''}
@@ -46,7 +44,7 @@ export default function Header({ location, onSelectLocation, onDetectLocation, d
           )}
 
           {/* Mobile Action Buttons (My Location & Settings) */}
-          <div className="flex items-center gap-1.5 sm:gap-2 md:hidden">
+          <div className="flex items-center gap-2 md:hidden">
             <button
               className="btn-ghost !p-2 !min-h-[38px] !min-w-[38px] flex items-center justify-center rounded-xl"
               onClick={onDetectLocation}
@@ -72,18 +70,20 @@ export default function Header({ location, onSelectLocation, onDetectLocation, d
           </div>
         </div>
 
-        {/* Search input (full width on mobile, flexible on desktop) */}
-        <div className="flex-1 w-full min-w-0">
+        {/* Search input (centered on desktop, full-width on mobile) */}
+        <div className="flex-1 w-full max-w-full md:max-w-[480px] lg:max-w-[560px] mx-auto">
           <LocationSearch onSelectLocation={onSelectLocation} />
         </div>
 
         {/* Desktop Action Buttons */}
         <div className="hidden md:flex items-center gap-2.5 flex-shrink-0">
-          {/* Desktop Location Badge (when on medium screens) */}
+          {/* Desktop Location Badge */}
           {location && (
-            <div className="hidden md:flex lg:hidden items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 max-w-[160px] truncate">
+            <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 max-w-[200px] truncate">
               <MapPin size={13} className="text-indigo-400 flex-shrink-0" />
-              <span className="text-xs text-slate-300 font-medium truncate">{location.name}</span>
+              <span className="text-xs text-slate-300 font-medium truncate">
+                {location.name}{location.country ? `, ${location.country}` : ''}
+              </span>
             </div>
           )}
 
@@ -114,4 +114,3 @@ export default function Header({ location, onSelectLocation, onDetectLocation, d
     </header>
   );
 }
-
