@@ -82,29 +82,32 @@ export const WeatherStatsGrid: React.FC<WeatherStatsGridProps> = ({
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3">
       {stats.map((stat, idx) => {
         const Icon = stat.icon;
+        const isLastItem = idx === stats.length - 1; // 5th item (Visibility)
         return (
           <motion.div
             key={stat.id}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, delay: idx * 0.05 }}
-            className={`p-4 rounded-2xl glass-card border border-white/5 ${stat.borderGlow} transition-all duration-300 flex flex-col justify-between`}
+            className={`p-3 sm:p-4 rounded-2xl glass-card border border-white/5 ${stat.borderGlow} transition-all duration-300 flex flex-col justify-between ${
+              isLastItem ? 'col-span-2 sm:col-span-1' : ''
+            }`}
           >
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-medium tracking-wide uppercase text-slate-400">
+            <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+              <span className="text-[10px] sm:text-[11px] font-medium tracking-wide uppercase text-slate-400">
                 {stat.label}
               </span>
-              <Icon className={`w-4 h-4 ${stat.color}`} />
+              <Icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${stat.color} flex-shrink-0`} />
             </div>
 
             <div>
-              <div className="font-display text-xl sm:text-2xl font-bold tracking-tight text-white">
+              <div className="font-display text-lg sm:text-2xl font-bold tracking-tight text-white">
                 {stat.value}
               </div>
-              <div className="text-[11px] text-slate-400 mt-0.5 truncate">
+              <div className="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 truncate">
                 {stat.subtext}
               </div>
               {stat.extra}

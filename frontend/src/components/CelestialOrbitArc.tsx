@@ -32,24 +32,24 @@ export const CelestialOrbitArc: React.FC<CelestialOrbitArcProps> = ({
   const sunY = cy - ry * Math.sin(theta);
 
   return (
-    <div className="p-6 rounded-2xl glass-card border border-white/10 relative overflow-hidden">
+    <div className="p-4 sm:p-6 rounded-2xl glass-card border border-white/10 relative overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-2.5 mb-3 sm:mb-4">
         <div className="flex items-center gap-2">
           <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
             <Sun className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="font-display text-base font-bold text-white">
+            <h3 className="font-display text-sm sm:text-base font-bold text-white">
               Celestial Solar & Lunar Orbit
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-[11px] sm:text-xs text-slate-400">
               Live ephemeris trajectory & lunar illumination
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-semibold">
+        <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[11px] sm:text-xs font-semibold self-start xs:self-auto font-mono">
           <Sparkles className="w-3 h-3 text-amber-400" />
           <span>{sunInfo.isDaytime ? sunInfo.timeUntilSunset : `Sunrise ${sunInfo.timeUntilSunrise}`}</span>
         </div>

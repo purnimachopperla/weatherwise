@@ -173,38 +173,34 @@ export const WeatherRadarMap: React.FC<WeatherRadarMapProps> = ({
   };
 
   return (
-    <div
-      className={`p-6 rounded-2xl glass-card border border-white/10 relative transition-all duration-300 ${
-        isFullscreen ? 'fixed inset-4 z-50 p-6 flex flex-col justify-between' : ''
-      }`}
-    >
-      {/* Map Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+    <div className={`rounded-2xl glass-card border border-white/10 p-4 sm:p-6 transition-all duration-300 ${isFullscreen ? 'fixed inset-4 z-[999] bg-dark-950 flex flex-col' : 'relative'}`}>
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 sm:mb-4">
         <div className="flex items-center gap-2">
           <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
             <Satellite className="w-4 h-4" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-display text-base font-bold text-white">
-                God's Eye View • Planetary Telemetry & Radar
+              <h3 className="font-display text-sm sm:text-base font-bold text-white">
+                Live Atmospheric Radar & Satellite
               </h3>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                GEV-v1.0
+              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-cyan-500/20 text-cyan-300 font-mono">
+                LIVE
               </span>
             </div>
-            <p className="text-xs text-slate-400">
-              Keyless satellite imagery, live precipitation radar & global seismic feeds
+            <p className="text-[11px] sm:text-xs text-slate-400">
+              Interactive precipitation, satellite imagery & USGS seismic activity
             </p>
           </div>
         </div>
 
         {/* Action Controls & Layer Switcher */}
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 no-scrollbar flex-nowrap">
           {/* God's Eye HUD Toggle */}
           <button
             onClick={() => setIsGodsEyeMode(!isGodsEyeMode)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold font-mono transition-all flex items-center gap-1.5 cursor-pointer ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold font-mono transition-all flex items-center gap-1.5 cursor-pointer flex-shrink-0 active:scale-95 ${
               isGodsEyeMode
                 ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-glow-cyan'
                 : 'bg-dark-900 border border-white/10 text-slate-400 hover:text-slate-200'
@@ -214,11 +210,11 @@ export const WeatherRadarMap: React.FC<WeatherRadarMapProps> = ({
             <span>{isGodsEyeMode ? 'HUD ON' : 'HUD OFF'}</span>
           </button>
 
-          {/* Basemap Switcher (100% Free & Keyless) */}
-          <div className="flex items-center gap-1 p-1 rounded-xl bg-dark-900 border border-white/5 text-xs">
+          {/* Basemap Switcher */}
+          <div className="flex items-center gap-0.5 p-0.5 sm:p-1 rounded-xl bg-dark-900 border border-white/5 text-xs flex-shrink-0">
             <button
               onClick={() => setBasemap('satellite')}
-              className={`px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+              className={`px-2 sm:px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer ${
                 basemap === 'satellite' ? 'bg-white/20 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
               }`}
             >
@@ -226,15 +222,15 @@ export const WeatherRadarMap: React.FC<WeatherRadarMapProps> = ({
             </button>
             <button
               onClick={() => setBasemap('dark')}
-              className={`px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+              className={`px-2 sm:px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer ${
                 basemap === 'dark' ? 'bg-white/20 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              Dark Grid
+              Dark
             </button>
             <button
               onClick={() => setBasemap('osm')}
-              className={`px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+              className={`px-2 sm:px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer hidden xs:inline-block ${
                 basemap === 'osm' ? 'bg-white/20 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
               }`}
             >
@@ -242,7 +238,7 @@ export const WeatherRadarMap: React.FC<WeatherRadarMapProps> = ({
             </button>
             <button
               onClick={() => setBasemap('topo')}
-              className={`px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+              className={`px-2 sm:px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer ${
                 basemap === 'topo' ? 'bg-white/20 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
               }`}
             >
@@ -251,10 +247,10 @@ export const WeatherRadarMap: React.FC<WeatherRadarMapProps> = ({
           </div>
 
           {/* Layers Group */}
-          <div className="flex items-center gap-1 p-1 rounded-xl bg-dark-900 border border-white/5 text-xs">
+          <div className="flex items-center gap-0.5 p-0.5 sm:p-1 rounded-xl bg-dark-900 border border-white/5 text-xs flex-shrink-0">
             <button
               onClick={() => setActiveLayer('radar')}
-              className={`px-2.5 py-1 rounded-lg font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-2 sm:px-2.5 py-1 rounded-lg font-medium transition-all flex items-center gap-1 cursor-pointer ${
                 activeLayer === 'radar'
                   ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
                   : 'text-slate-400 hover:text-slate-200'
@@ -266,7 +262,7 @@ export const WeatherRadarMap: React.FC<WeatherRadarMapProps> = ({
 
             <button
               onClick={() => setActiveLayer('earthquakes')}
-              className={`px-2.5 py-1 rounded-lg font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-2 sm:px-2.5 py-1 rounded-lg font-medium transition-all flex items-center gap-1 cursor-pointer ${
                 activeLayer === 'earthquakes'
                   ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
                   : 'text-slate-400 hover:text-slate-200'
@@ -281,7 +277,7 @@ export const WeatherRadarMap: React.FC<WeatherRadarMapProps> = ({
           <button
             onClick={() => setIsFullscreen(!isFullscreen)}
             title={isFullscreen ? 'Exit Fullscreen' : 'Expand Tactical Radar'}
-            className="p-2 rounded-xl bg-dark-900 border border-white/10 text-slate-300 hover:text-white hover:border-white/20 transition-all cursor-pointer"
+            className="p-1.5 sm:p-2 rounded-xl bg-dark-900 border border-white/10 text-slate-300 hover:text-white hover:border-white/20 transition-all cursor-pointer flex-shrink-0 active:scale-95"
           >
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </button>
@@ -289,7 +285,7 @@ export const WeatherRadarMap: React.FC<WeatherRadarMapProps> = ({
       </div>
 
       {/* Map View Container with Tactical Overlay */}
-      <div className={`w-full rounded-xl overflow-hidden border border-white/10 relative ${isFullscreen ? 'flex-1 min-h-[520px]' : 'h-96'}`}>
+      <div className={`w-full rounded-xl overflow-hidden border border-white/10 relative ${isFullscreen ? 'flex-1 min-h-[520px]' : 'h-72 xs:h-80 sm:h-96'}`}>
         {/* God's Eye Tactical HUD */}
         {isGodsEyeMode && (
           <GodsEyeHUD

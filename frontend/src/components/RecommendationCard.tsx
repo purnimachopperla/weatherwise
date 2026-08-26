@@ -51,7 +51,7 @@ export const RecommendationCard: React.FC<RecommendationCardProps> = ({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: 0.15 }}
-      className="p-6 rounded-2xl glass-card border border-white/10 relative overflow-hidden flex flex-col justify-between"
+      className="p-4 sm:p-6 rounded-2xl glass-card border border-white/10 relative overflow-hidden flex flex-col justify-between"
     >
       <div>
         <div className="flex items-center justify-between mb-3">
@@ -60,10 +60,10 @@ export const RecommendationCard: React.FC<RecommendationCardProps> = ({
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-display text-base font-bold text-white">
+              <h3 className="font-display text-sm sm:text-base font-bold text-white">
                 Personalized {recommendation.profile_label} Intel
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-[11px] sm:text-xs text-slate-400">
                 Actionable advice tailored to current atmospheric metrics
               </p>
             </div>

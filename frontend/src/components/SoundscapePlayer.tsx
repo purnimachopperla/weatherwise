@@ -50,7 +50,7 @@ export const SoundscapePlayer: React.FC = () => {
   ];
 
   return (
-    <div className="fixed bottom-6 right-6 z-40">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40">
       {/* Expanded Control Box */}
       <AnimatePresence>
         {isOpen && (
@@ -58,7 +58,7 @@ export const SoundscapePlayer: React.FC = () => {
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.95 }}
-            className="mb-3 p-4 rounded-2xl bg-dark-900/95 backdrop-blur-2xl border border-white/10 shadow-2xl w-64 space-y-3"
+            className="mb-2.5 sm:mb-3 p-3.5 sm:p-4 rounded-2xl bg-dark-900/95 backdrop-blur-2xl border border-white/10 shadow-2xl w-60 sm:w-64 max-w-[calc(100vw-2rem)] space-y-3"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">

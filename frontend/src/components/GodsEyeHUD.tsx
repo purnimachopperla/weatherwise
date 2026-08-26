@@ -63,21 +63,20 @@ export const GodsEyeHUD: React.FC<GodsEyeHUDProps> = ({
   const v = getVisionStyles();
 
   return (
-    <div className="absolute inset-0 pointer-events-none z-[450] flex flex-col justify-between p-4 select-none font-mono">
+    <div className="absolute inset-0 pointer-events-none z-[450] flex flex-col justify-between p-2.5 sm:p-4 select-none font-mono">
       {/* Top Bar: Orbit Tracker, Heading Ribbon, Vision Switcher */}
-      <div className="flex items-start justify-between gap-3 pointer-events-auto">
+      <div className="flex items-start justify-between gap-2 sm:gap-3 pointer-events-auto">
         {/* Left: Satellite Orbital Telemetry */}
-        <div className={`p-2.5 rounded-xl ${v.bg} backdrop-blur-xl border ${v.border} ${v.primary} text-[10px] space-y-1 shadow-2xl max-w-[210px]`}>
-          <div className="flex items-center gap-1.5 font-bold uppercase tracking-wider">
-            <Satellite className="w-3.5 h-3.5 animate-pulse text-current" />
-            <span>GEV ORBITAL RECON</span>
+        <div className={`p-1.5 sm:p-2.5 rounded-xl ${v.bg} backdrop-blur-xl border ${v.border} ${v.primary} text-[8px] sm:text-[10px] space-y-0.5 sm:space-y-1 shadow-2xl max-w-[140px] sm:max-w-[210px]`}>
+          <div className="flex items-center gap-1 sm:gap-1.5 font-bold uppercase tracking-wider">
+            <Satellite className="w-3 h-3 sm:w-3.5 sm:h-3.5 animate-pulse text-current" />
+            <span className="truncate">ORBITAL RECON</span>
           </div>
-          <div className="truncate">TRACK: <span className="text-slate-200">{tactical.satOrbitId}</span></div>
-          <div>PASS: <strong className="text-white">{tactical.satPassTime}</strong></div>
-          <div className="text-[9px] opacity-75">ZONE: {tactical.securityZone}</div>
+          <div className="truncate">TRK: <span className="text-slate-200">{tactical.satOrbitId}</span></div>
+          <div className="hidden xs:block">PASS: <strong className="text-white">{tactical.satPassTime}</strong></div>
         </div>
 
-        {/* Center: Heading Tape Ribbon */}
+        {/* Center: Heading Tape Ribbon (Desktop only) */}
         <div className={`hidden md:flex items-center px-4 py-1.5 rounded-xl ${v.bg} backdrop-blur-xl border ${v.border} ${v.primary} text-xs font-bold gap-3 shadow-2xl`}>
           <span className="opacity-40">240</span>
           <span className="opacity-60">270 (W)</span>
@@ -89,12 +88,12 @@ export const GodsEyeHUD: React.FC<GodsEyeHUDProps> = ({
         </div>
 
         {/* Right: Vision Mode Switcher */}
-        <div className={`p-1 rounded-xl ${v.bg} backdrop-blur-xl border ${v.border} flex items-center gap-1 shadow-2xl`}>
+        <div className={`p-0.5 sm:p-1 rounded-xl ${v.bg} backdrop-blur-xl border ${v.border} flex items-center gap-0.5 sm:gap-1 shadow-2xl`}>
           {(['cyan', 'flir', 'nvg', 'amber'] as VisionMode[]).map((mode) => (
             <button
               key={mode}
               onClick={() => onSelectVisionMode(mode)}
-              className={`px-2.5 py-1 rounded-lg text-[10px] uppercase font-bold transition-all cursor-pointer ${
+              className={`px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[9px] sm:text-[10px] uppercase font-bold transition-all cursor-pointer ${
                 visionMode === mode
                   ? 'bg-white/20 text-white shadow-sm border border-white/20'
                   : 'text-slate-400 hover:text-slate-200'
@@ -108,39 +107,39 @@ export const GodsEyeHUD: React.FC<GodsEyeHUDProps> = ({
 
       {/* Center Tactical Crosshair & Target Reticle */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="relative flex items-center justify-center w-44 h-44 sm:w-56 sm:h-56">
+        <div className="relative flex items-center justify-center w-32 h-32 xs:w-40 xs:h-40 sm:w-56 sm:h-56">
           {/* Target Reticle Range Rings */}
           <div className={`absolute inset-0 rounded-full border border-dashed ${v.border} opacity-40 animate-spin-slow`} />
-          <div className={`absolute inset-6 rounded-full border ${v.border} opacity-50`} />
+          <div className={`absolute inset-4 sm:inset-6 rounded-full border ${v.border} opacity-50`} />
 
           {/* Corner Crosshairs */}
-          <div className={`absolute top-0 left-0 w-3.5 h-3.5 border-t-2 border-l-2 ${v.border}`} />
-          <div className={`absolute top-0 right-0 w-3.5 h-3.5 border-t-2 border-r-2 ${v.border}`} />
-          <div className={`absolute bottom-0 left-0 w-3.5 h-3.5 border-b-2 border-l-2 ${v.border}`} />
-          <div className={`absolute bottom-0 right-0 w-3.5 h-3.5 border-b-2 border-r-2 ${v.border}`} />
+          <div className={`absolute top-0 left-0 w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 border-t-2 border-l-2 ${v.border}`} />
+          <div className={`absolute top-0 right-0 w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 border-t-2 border-r-2 ${v.border}`} />
+          <div className={`absolute bottom-0 left-0 w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 border-b-2 border-l-2 ${v.border}`} />
+          <div className={`absolute bottom-0 right-0 w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 border-b-2 border-r-2 ${v.border}`} />
 
           {/* Center Dot & Reticle Cross */}
-          <div className={`w-2 h-2 rounded-full ${v.primary} bg-current animate-ping opacity-75`} />
-          <div className={`absolute w-3 h-3 rounded-full border ${v.border}`} />
+          <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${v.primary} bg-current animate-ping opacity-75`} />
+          <div className={`absolute w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full border ${v.border}`} />
 
           {/* Target Info Label */}
-          <div className={`absolute -bottom-7 px-2.5 py-0.5 rounded-lg ${v.bg} border ${v.border} text-[10px] font-bold ${v.primary} tracking-wider uppercase backdrop-blur-md shadow-lg`}>
-            TARGET: {locationName} [{temperature.toFixed(1)}°C]
+          <div className={`absolute -bottom-6 sm:-bottom-7 px-2 sm:px-2.5 py-0.5 rounded-lg ${v.bg} border ${v.border} text-[9px] sm:text-[10px] font-bold ${v.primary} tracking-wider uppercase backdrop-blur-md shadow-lg truncate max-w-[160px] sm:max-w-none`}>
+            {locationName} [{temperature.toFixed(1)}°C]
           </div>
         </div>
       </div>
 
       {/* Bottom Telemetry & Status Bar */}
-      <div className="flex items-end justify-between gap-3 pointer-events-auto">
+      <div className="flex items-end justify-between gap-2 sm:gap-3 pointer-events-auto">
         {/* Left MGRS / Coordinate Telemetry */}
-        <div className={`p-2.5 rounded-xl ${v.bg} backdrop-blur-xl border ${v.border} ${v.primary} text-[10px] space-y-0.5 shadow-2xl max-w-[240px]`}>
-          <div className="flex items-center gap-1.5 font-bold">
-            <Radio className="w-3.5 h-3.5 animate-pulse text-current" />
-            <span>MGRS GRID DATUM</span>
+        <div className={`p-1.5 sm:p-2.5 rounded-xl ${v.bg} backdrop-blur-xl border ${v.border} ${v.primary} text-[8px] sm:text-[10px] space-y-0.5 shadow-2xl max-w-[160px] sm:max-w-[240px]`}>
+          <div className="flex items-center gap-1 sm:gap-1.5 font-bold">
+            <Radio className="w-3 h-3 sm:w-3.5 sm:h-3.5 animate-pulse text-current" />
+            <span>MGRS DATUM</span>
           </div>
-          <div className="font-bold text-white tracking-widest text-[11px]">{tactical.mgrs}</div>
-          <div className="text-[9px] opacity-80 font-mono">
-            {latitude.toFixed(4)}°, {longitude.toFixed(4)}° • ALT {tactical.altitudeFt} FT
+          <div className="font-bold text-white tracking-widest text-[9px] sm:text-[11px] truncate">{tactical.mgrs}</div>
+          <div className="text-[8px] sm:text-[9px] opacity-80 font-mono hidden xs:block">
+            {latitude.toFixed(2)}°, {longitude.toFixed(2)}° • ALT {tactical.altitudeFt} FT
           </div>
         </div>
 

@@ -130,7 +130,7 @@ export function App() {
       />
 
       {/* Main Content Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
         {/* Error Notification */}
         {error && <ErrorBanner message={error} onRetry={refresh} />}
 
@@ -148,9 +148,9 @@ export function App() {
         {loading || !weather || !airQuality || !recommendation ? (
           <SkeletonLoader />
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
             {/* Left Main Column (8 Cols on Desktop) */}
-            <div className="lg:col-span-8 space-y-6">
+            <div className="lg:col-span-8 space-y-4 sm:space-y-6">
               {/* Hero Weather Card */}
               <HeroWeatherCard
                 weather={weather}
@@ -193,7 +193,7 @@ export function App() {
             </div>
 
             {/* Right Column (4 Cols on Desktop): AQI, Insights & 7-Day Outlook */}
-            <div className="lg:col-span-4 space-y-6">
+            <div className="lg:col-span-4 space-y-4 sm:space-y-6">
               {/* Air Quality (AQI) Dial Card */}
               <AQICard airQuality={airQuality} />
 
@@ -225,13 +225,13 @@ export function App() {
       />
 
       {/* Minimalist Footer */}
-      <footer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-xs text-slate-500 border-t border-white/5 mt-12 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <footer className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 text-center text-[11px] sm:text-xs text-slate-500 border-t border-white/5 mt-8 sm:mt-12 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 pb-safe">
         <p>
           WeatherWise Environmental Intelligence Platform • Live Telemetry Synced with Open-Meteo & FastAPI
         </p>
         <button
           onClick={() => setParticlesEnabled(!particlesEnabled)}
-          className="text-xs text-slate-400 hover:text-cyan-300 transition-colors"
+          className="text-[11px] sm:text-xs text-slate-400 hover:text-cyan-300 transition-colors cursor-pointer"
         >
           {particlesEnabled ? '✨ Particle FX: Active' : '✨ Particle FX: Paused'}
         </button>

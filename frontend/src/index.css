@@ -16,21 +16,42 @@
     scroll-behavior: smooth;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
     background-color: var(--color-bg-primary);
     color: #f8fafc;
     overflow-x: hidden;
+    touch-action: manipulation;
   }
 
   /* Custom Smooth Momentum Scrolling */
   * {
     scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
 @layer utilities {
+  /* Safe-area insets for mobile notched phones */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 1rem);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 1rem);
+  }
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
   /* Minimalist Frosted Glass */
   .glass-card {
     background: rgba(15, 23, 42, 0.60);

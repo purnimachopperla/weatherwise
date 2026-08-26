@@ -53,21 +53,21 @@ export const AQICard: React.FC<AQICardProps> = ({ airQuality }) => {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: 0.1 }}
-      className="p-6 rounded-2xl glass-card border border-white/10 relative overflow-hidden flex flex-col justify-between"
+      className="p-4 sm:p-6 rounded-2xl glass-card border border-white/10 relative overflow-hidden flex flex-col justify-between"
     >
       {/* Top Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-3 sm:mb-4">
         <div className="flex items-center gap-2">
           <div className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
             <Wind className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="font-display text-base font-bold text-white">Air Quality Index</h3>
-            <p className="text-xs text-slate-400">European Air Quality Standard (EAQI)</p>
+            <h3 className="font-display text-sm sm:text-base font-bold text-white">Air Quality Index</h3>
+            <p className="text-[11px] sm:text-xs text-slate-400">European Air Quality Standard (EAQI)</p>
           </div>
         </div>
 
-        <div className={`px-3 py-1 rounded-full text-xs font-semibold border ${aqiStyle.bg} ${aqiStyle.text} ${aqiStyle.border}`}>
+        <div className={`px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-semibold border ${aqiStyle.bg} ${aqiStyle.text} ${aqiStyle.border}`}>
           {airQuality.aqi_category || 'Moderate'}
         </div>
       </div>

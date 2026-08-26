@@ -44,25 +44,25 @@ export const SavedLocationsDrawer: React.FC<SavedLocationsDrawerProps> = ({
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
           />
 
-          <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
+          <div className="absolute inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10 w-full sm:w-auto">
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="w-screen max-w-md bg-dark-950/95 backdrop-blur-2xl border-l border-white/10 p-6 flex flex-col justify-between shadow-2xl"
+              className="w-full sm:w-screen sm:max-w-md bg-dark-950/95 backdrop-blur-2xl border-l border-white/10 p-4 sm:p-6 flex flex-col justify-between shadow-2xl"
             >
               <div>
-                <div className="flex items-center justify-between pb-4 border-b border-white/10">
-                  <div className="flex items-center gap-2.5">
+                <div className="flex items-center justify-between pb-3 sm:pb-4 border-b border-white/10">
+                  <div className="flex items-center gap-2 sm:gap-2.5">
                     <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
                       <Bookmark className="w-4 h-4" />
                     </div>
                     <div>
-                      <h2 className="font-display text-lg font-bold text-white">
+                      <h2 className="font-display text-base sm:text-lg font-bold text-white">
                         Saved Locations
                       </h2>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-[11px] sm:text-xs text-slate-400">
                         {savedLocations.length} bookmarked spots
                       </p>
                     </div>

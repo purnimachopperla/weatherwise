@@ -38,49 +38,49 @@ export const WeatherChart: React.FC<WeatherChartProps> = ({
   });
 
   return (
-    <div className="p-6 rounded-2xl glass-card border border-white/10">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+    <div className="p-4 sm:p-6 rounded-2xl glass-card border border-white/10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
         <div className="flex items-center gap-2">
           <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
             <TrendingUp className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="font-display text-base font-bold text-white">
+            <h3 className="font-display text-sm sm:text-base font-bold text-white">
               Dynamic Telemetry Curves
             </h3>
-            <p className="text-xs text-slate-400">Continuous 16-hour sensor curves</p>
+            <p className="text-[11px] sm:text-xs text-slate-400">Continuous 16-hour sensor curves</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-dark-900 border border-white/5">
+        <div className="flex items-center gap-1 p-0.5 sm:p-1 rounded-xl bg-dark-900 border border-white/5 self-start sm:self-auto">
           <button
             onClick={() => setActiveMetric('temp')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+            className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
               activeMetric === 'temp'
                 ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shadow-sm'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <Thermometer className="w-3.5 h-3.5" />
+            <Thermometer className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
             <span>Temperature</span>
           </button>
           <button
             onClick={() => setActiveMetric('rain')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+            className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
               activeMetric === 'rain'
                 ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30 shadow-sm'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <Droplets className="w-3.5 h-3.5" />
+            <Droplets className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
             <span>Precipitation %</span>
           </button>
         </div>
       </div>
 
-      <div className="h-60 w-full">
+      <div className="h-48 sm:h-60 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          <AreaChart data={chartData} margin={{ top: 10, right: 8, left: -24, bottom: 0 }}>
             <defs>
               <linearGradient id="tempGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.4} />
@@ -95,13 +95,13 @@ export const WeatherChart: React.FC<WeatherChartProps> = ({
             <XAxis
               dataKey="time"
               stroke="#64748b"
-              fontSize={11}
+              fontSize={10}
               tickLine={false}
               axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
             />
             <YAxis
               stroke="#64748b"
-              fontSize={11}
+              fontSize={10}
               tickLine={false}
               axisLine={false}
               unit={activeMetric === 'temp' ? '°' : '%'}
