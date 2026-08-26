@@ -46,7 +46,7 @@ export default function Dashboard({ onOpenSettings }) {
   const [weather, setWeather] = useState(null);
   const [airQuality, setAirQuality] = useState(null);
   const [alerts, setAlerts] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [savedLocations, setSavedLocations] = useState([]);
   const [locationError, setLocationError] = useState(null);

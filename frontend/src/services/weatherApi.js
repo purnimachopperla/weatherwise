@@ -10,11 +10,14 @@ import axios from 'axios';
 
 // The base URL points to our FastAPI backend.
 // In development, Vite proxies /api to http://localhost:8000
-// In production, VITE_API_BASE_URL points to the public Render backend URL.
-const rawApiUrl = import.meta.env.VITE_API_BASE_URL || '';
-const cleanApiUrl = rawApiUrl ? rawApiUrl.replace(/\/+$/, '') : '';
+// In production, VITE_API_URL (or VITE_API_BASE_URL) points to the public Render backend URL.
+const envApiUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || '';
+const cleanApiUrl = envApiUrl ? envApiUrl.trim().replace(/\/+$/, '') : '';
+
+export const API_URL = cleanApiUrl || (import.meta.env.DEV ? 'http://localhost:8000' : '');
+
 // If cleanApiUrl already ends with /api, use it as is; otherwise append /api
-const API_BASE = cleanApiUrl
+export const API_BASE = cleanApiUrl
   ? (cleanApiUrl.endsWith('/api') ? cleanApiUrl : `${cleanApiUrl}/api`)
   : '/api';
 
