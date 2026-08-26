@@ -40,7 +40,7 @@ export default function Forecast({ weather }) {
           return (
             <div
               key={day.date}
-              className={`grid grid-cols-[60px_28px_1fr_64px] sm:grid-cols-[80px_32px_1fr_76px] items-center gap-2 sm:gap-3 py-2 px-2.5 sm:px-3 rounded-xl transition-colors ${
+              className={`grid grid-cols-[54px_24px_1fr_56px] xs:grid-cols-[68px_28px_1fr_64px] sm:grid-cols-[80px_32px_1fr_76px] items-center gap-1.5 xs:gap-2 sm:gap-3 py-2 px-2 sm:px-3 rounded-xl transition-colors ${
                 isToday ? 'bg-indigo-500/10 border border-indigo-500/20' : 'hover:bg-slate-900/40'
               }`}
             >
@@ -50,7 +50,7 @@ export default function Forecast({ weather }) {
               </span>
 
               {/* Weather emoji */}
-              <span className="text-lg sm:text-xl text-center select-none" role="img">
+              <span className="text-base sm:text-xl text-center select-none" role="img">
                 {emoji}
               </span>
 
@@ -67,11 +67,11 @@ export default function Forecast({ weather }) {
               </div>
 
               {/* Temp range */}
-              <div className="flex items-center justify-end gap-1.5 sm:gap-2 text-xs sm:text-sm">
-                <span className="text-slate-400 font-medium min-w-[24px] text-right">
+              <div className="flex items-center justify-end gap-1 sm:gap-2 text-xs sm:text-sm font-semibold">
+                <span className="text-slate-400 font-medium min-w-[20px] sm:min-w-[24px] text-right">
                   {Math.round(day.temp_min)}°
                 </span>
-                <span className="text-slate-100 font-bold min-w-[24px] text-right">
+                <span className="text-slate-100 font-bold min-w-[20px] sm:min-w-[24px] text-right">
                   {Math.round(day.temp_max)}°
                 </span>
               </div>

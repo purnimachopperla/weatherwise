@@ -38,7 +38,7 @@ export default function CurrentWeather({ weather, location }) {
           {/* Location Title */}
           <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3">
             <MapPin size={16} className="text-cyan-400 flex-shrink-0" />
-            <span className="text-sm sm:text-base font-bold text-slate-200 truncate">
+            <span className="text-sm sm:text-base font-bold text-slate-200 break-words">
               {location?.name || weather.location}
               {location?.country && (
                 <span className="text-slate-400 font-normal ml-1">
@@ -63,7 +63,7 @@ export default function CurrentWeather({ weather, location }) {
           </div>
 
           {/* Weather Condition */}
-          <p className="text-lg sm:text-xl md:text-2xl font-bold text-slate-100 mb-1">
+          <p className="text-lg sm:text-xl md:text-2xl font-bold text-slate-100 mb-1 break-words">
             {current.weather_condition}
           </p>
 

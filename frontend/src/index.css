@@ -61,16 +61,30 @@
 
 html {
   scroll-behavior: smooth;
+  height: auto;
+  min-height: 100%;
 }
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--gradient-hero);
   min-height: 100vh;
+  height: auto;
+  width: 100%;
+  overflow-x: hidden;
   color: var(--color-text-primary);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+  height: auto;
+  width: 100%;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ─────────────────────────────────────────────
@@ -84,6 +98,9 @@ body {
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
   transition: var(--transition);
+  height: auto;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .glass-card:hover {
@@ -99,6 +116,9 @@ body {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
+  height: auto;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 /* ─────────────────────────────────────────────

@@ -13,7 +13,7 @@ export default function HourlyForecast({ weather }) {
   const hourly = weather.hourly.slice(0, 24);
 
   return (
-    <div className="glass-card-static fade-in p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-indigo-500/20">
+    <div className="glass-card-static fade-in p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-indigo-500/20 w-full overflow-hidden">
       <div className="flex items-center justify-between mb-3 sm:mb-4">
         <h3 className="text-xs sm:text-sm text-slate-400 font-bold uppercase tracking-wider">
           Hourly Forecast (24h)
@@ -22,7 +22,7 @@ export default function HourlyForecast({ weather }) {
       </div>
 
       <div
-        className="flex gap-2 sm:gap-2.5 overflow-x-auto pb-2 pt-0.5 scrollbar-thin scroll-smooth -mx-2 px-2 sm:mx-0 sm:px-0"
+        className="flex gap-2 sm:gap-2.5 overflow-x-auto pb-2 pt-0.5 scrollbar-thin scroll-smooth w-full"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {hourly.map((hour, i) => {

@@ -77,11 +77,11 @@ export default function SavedLocations({
                     <MapPin size={14} />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className={`text-xs sm:text-sm truncate ${isActive ? 'text-slate-100 font-bold' : 'text-slate-300 font-semibold'}`}>
+                    <p className={`text-xs sm:text-sm break-words leading-tight ${isActive ? 'text-slate-100 font-bold' : 'text-slate-300 font-semibold'}`}>
                       {loc.name}
                     </p>
                     {loc.country && (
-                      <p className="text-[10px] sm:text-[11px] text-slate-500 truncate">{loc.country}</p>
+                      <p className="text-[10px] sm:text-[11px] text-slate-500 break-words leading-tight">{loc.country}</p>
                     )}
                   </div>
                   {isActive && (

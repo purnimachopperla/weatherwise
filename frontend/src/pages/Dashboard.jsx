@@ -201,7 +201,7 @@ export default function Dashboard({ onOpenSettings }) {
       />
 
       {/* Main content container */}
-      <main className="max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 py-3.5 sm:py-6 pb-16 sm:pb-20">
+      <main className="w-full max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 py-3.5 sm:py-6 pb-16 sm:pb-20">
         {/* Location detection error banner */}
         {locationError && (
           <div className="flex items-center gap-3 p-3 sm:p-3.5 mb-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs sm:text-sm">
@@ -251,7 +251,7 @@ export default function Dashboard({ onOpenSettings }) {
             </div>
 
             {/* ── Responsive Main Grid ── */}
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_400px] gap-4 sm:gap-5 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_420px] gap-4 sm:gap-6 items-start w-full">
               {/* ─ LEFT COLUMN: Main Weather, Stats, Alerts, Forecasts & Charts ─ */}
               <div className="flex flex-col gap-4 sm:gap-5 min-w-0">
                 {/* Hero Weather Card */}

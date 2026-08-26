@@ -80,10 +80,10 @@ export default function RecommendationCard({ recommendation, loading }) {
           {profile.emoji}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-[10px] sm:text-[11px] text-slate-400 font-bold uppercase tracking-wider truncate">
+          <p className="text-[10px] sm:text-[11px] text-slate-400 font-bold uppercase tracking-wider">
             Personalized Guidance
           </p>
-          <h3 className="text-base sm:text-lg font-bold text-slate-100 truncate">
+          <h3 className="text-base sm:text-lg font-bold text-slate-100 break-words leading-tight">
             {recommendation.profile_label}
           </h3>
         </div>
@@ -97,7 +97,7 @@ export default function RecommendationCard({ recommendation, loading }) {
           borderColor: `${profile.color}30`,
         }}
       >
-        <p className="text-sm sm:text-base font-bold text-slate-100 leading-snug">
+        <p className="text-sm sm:text-base font-bold text-slate-100 leading-snug break-words">
           💡 {recommendation.summary}
         </p>
       </div>
@@ -127,7 +127,7 @@ export default function RecommendationCard({ recommendation, loading }) {
                 <IconComponent size={16} />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-xs sm:text-sm font-bold mb-0.5" style={{ color: style.text }}>
+                <p className="text-xs sm:text-sm font-bold mb-0.5 break-words" style={{ color: style.text }}>
                   {item.title}
                 </p>
                 <p className="text-xs sm:text-[13px] text-slate-300 leading-relaxed break-words">
@@ -144,7 +144,7 @@ export default function RecommendationCard({ recommendation, loading }) {
         <p className="text-[10px] sm:text-[11px] text-cyan-300 font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
           <span>⏰ Optimal Timing</span>
         </p>
-        <p className="text-xs sm:text-[13px] text-slate-300 leading-relaxed">
+        <p className="text-xs sm:text-[13px] text-slate-300 leading-relaxed break-words">
           {recommendation.best_time}
         </p>
       </div>

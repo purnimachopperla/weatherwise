@@ -22,7 +22,7 @@ export default function ProfileSelector({ activeProfile, onProfileChange }) {
       </div>
 
       <div
-        className="flex gap-2 sm:gap-2.5 overflow-x-auto pb-2 pt-0.5 scrollbar-thin scroll-smooth -mx-3 px-3 sm:mx-0 sm:px-0"
+        className="flex gap-2 sm:gap-2.5 overflow-x-auto pb-2 pt-0.5 scrollbar-thin scroll-smooth w-full"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {PROFILES.map((profile) => {

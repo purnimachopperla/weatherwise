@@ -45,10 +45,10 @@ export default function AQICard({ airQuality }) {
           </span>
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-base sm:text-lg font-bold leading-tight truncate" style={{ color: aqiColor }}>
+          <p className="text-base sm:text-lg font-bold leading-tight break-words" style={{ color: aqiColor }}>
             {aqiLabel}
           </p>
-          <p className="text-xs text-slate-400 font-medium mt-0.5">European Air Quality Standard</p>
+          <p className="text-xs text-slate-400 font-medium mt-0.5 leading-tight">European Air Quality Standard</p>
         </div>
       </div>
 

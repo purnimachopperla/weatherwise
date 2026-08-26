@@ -69,8 +69,8 @@ export default function Settings({ onClose }) {
                   className="flex items-center justify-between gap-2 p-3 rounded-xl bg-slate-950/60 border border-indigo-500/10"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs sm:text-sm font-semibold text-slate-200 truncate">{item.name}</p>
-                    <p className="text-[11px] text-slate-500 truncate">{item.source}</p>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-200 break-words">{item.name}</p>
+                    <p className="text-[11px] text-slate-500 break-words">{item.source}</p>
                   </div>
                   <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md flex-shrink-0">
                     LIVE & FREE

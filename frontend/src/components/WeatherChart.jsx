@@ -46,9 +46,9 @@ export default function WeatherChart({ weather }) {
         <h3 className="text-xs sm:text-sm text-slate-400 font-bold uppercase tracking-wider mb-3 sm:mb-4">
           🌡️ Temperature Trend (24h)
         </h3>
-        <div className="w-full h-40 sm:h-48 -ml-2 sm:ml-0">
+        <div className="w-full h-44 sm:h-52">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 5, right: 10, bottom: 0, left: -22 }}>
+            <AreaChart data={chartData} margin={{ top: 5, right: 10, bottom: 0, left: -20 }}>
               <defs>
                 <linearGradient id="tempGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#f97316" stopOpacity={0.35} />
@@ -91,9 +91,9 @@ export default function WeatherChart({ weather }) {
         <h3 className="text-xs sm:text-sm text-slate-400 font-bold uppercase tracking-wider mb-3 sm:mb-4">
           🌧️ Rain Probability (24h)
         </h3>
-        <div className="w-full h-36 sm:h-44 -ml-2 sm:ml-0">
+        <div className="w-full h-40 sm:h-48">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 5, right: 10, bottom: 0, left: -22 }}>
+            <BarChart data={chartData} margin={{ top: 5, right: 10, bottom: 0, left: -20 }}>
               <defs>
                 <linearGradient id="rainGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.9} />
