@@ -1,18 +1,14 @@
 /**
  * Dashboard.jsx — Environmental Decision Intelligence Platform (SIH 2024 Edition).
  *
- * Professional Architecture:
- * 1. Enterprise Top Navigation with Telemetry Status
- * 2. Stakeholder Decision Persona Selector
- * 3. Environmental Status Hero with Safety Score & Risk Classification
- * 4. Key Environmental Telemetry Grid (6 Metrics)
- * 5. Environmental Intelligence Engine & Multi-Parameter Advisory
- * 6. 24-Hour Hourly Telemetry Carousel
- * 7. Two-Column Analytical Split: 7-Day Tabular Forecast & (AQI + Trends)
- * 8. Monitored Telemetry Stations
+ * Centralized, optimized data fetching lifecycle:
+ * - Cancels stale in-flight requests on rapid location change (AbortController)
+ * - Single synchronized fetch on location change
+ * - Profile changes update recommendations without re-triggering entire telemetry stack
+ * - Structured error handling with rate-limit detection
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Header from '../components/Header';
 import ProfileSelector from '../components/ProfileSelector';
 import CurrentWeather from '../components/CurrentWeather';
@@ -31,13 +27,13 @@ import {
   fetchWeather,
   fetchAirQuality,
   fetchAlerts,
+  fetchRecommendation,
   reverseGeocode,
   getSavedLocations,
   saveLocation,
   deleteSavedLocation,
 } from '../services/weatherApi';
-import { useRecommendation } from '../hooks/useWeather';
-import { RefreshCw, AlertTriangle, Radio } from 'lucide-react';
+import { RefreshCw, AlertTriangle } from 'lucide-react';
 
 const DEFAULT_LOCATION = {
   name: 'Hyderabad',
@@ -64,57 +60,108 @@ export default function Dashboard({ onOpenSettings }) {
   const [weather, setWeather] = useState(null);
   const [airQuality, setAirQuality] = useState(null);
   const [alerts, setAlerts] = useState(null);
+  const [recommendation, setRecommendation] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [recLoading, setRecLoading] = useState(false);
   const [error, setError] = useState(null);
   const [savedLocations, setSavedLocations] = useState([]);
   const [locationError, setLocationError] = useState(null);
   const [detecting, setDetecting] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(null);
 
-  const {
-    recommendation,
-    loading: recLoading,
-  } = useRecommendation(location.latitude, location.longitude, location.name, profile);
+  const activeAbortRef = useRef(null);
+  const recAbortRef = useRef(null);
 
-  // ── Data Fetching ──────────────────────────────────────
+  // ── Primary Coordinated Data Fetching ──────────────────
   const fetchAll = useCallback(
-    async (loc = location) => {
+    async (loc = location, targetProfile = profile) => {
+      // Abort previous in-flight requests if location changed rapidly
+      if (activeAbortRef.current) {
+        activeAbortRef.current.abort();
+      }
+      const controller = new AbortController();
+      activeAbortRef.current = controller;
+
       setLoading(true);
       setError(null);
+
       try {
-        const [w, aq, al] = await Promise.all([
-          fetchWeather(loc.latitude, loc.longitude, loc.name),
-          fetchAirQuality(loc.latitude, loc.longitude, loc.name),
-          fetchAlerts(loc.latitude, loc.longitude, loc.name),
+        const [w, aq, al, rec] = await Promise.all([
+          fetchWeather(loc.latitude, loc.longitude, loc.name, controller.signal),
+          fetchAirQuality(loc.latitude, loc.longitude, loc.name, controller.signal),
+          fetchAlerts(loc.latitude, loc.longitude, loc.name, controller.signal),
+          fetchRecommendation(loc.latitude, loc.longitude, targetProfile, loc.name, controller.signal),
         ]);
+
         setWeather(w);
         setAirQuality(aq);
         setAlerts(al);
+        setRecommendation(rec);
         setLastRefresh(new Date());
+        setError(null);
       } catch (err) {
-        setError(err.message || 'Telemetry link failure. Please check network connection.');
+        if (err.name === 'CanceledError' || err.name === 'AbortError') {
+          return; // Ignore cancelled requests
+        }
+        setError(err.message || 'Telemetry link failure. Please check connection and retry.');
       } finally {
         setLoading(false);
       }
     },
-    [location]
+    [location, profile]
   );
 
+  // Trigger full fetch on coordinates change
   useEffect(() => {
-    fetchAll(location);
+    fetchAll(location, profile);
+    return () => {
+      if (activeAbortRef.current) activeAbortRef.current.abort();
+    };
   }, [location.latitude, location.longitude]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Profile-only update (avoids refetching entire weather stack)
+  const handleProfileChange = async (newProfile) => {
+    setProfile(newProfile);
+    if (!location.latitude || !location.longitude) return;
+
+    if (recAbortRef.current) {
+      recAbortRef.current.abort();
+    }
+    const controller = new AbortController();
+    recAbortRef.current = controller;
+
+    setRecLoading(true);
+    try {
+      const data = await fetchRecommendation(
+        location.latitude,
+        location.longitude,
+        newProfile,
+        location.name,
+        controller.signal
+      );
+      setRecommendation(data);
+    } catch (err) {
+      if (err.name !== 'CanceledError' && err.name !== 'AbortError') {
+        console.error('Failed to update recommendation for profile:', err);
+      }
+    } finally {
+      setRecLoading(false);
+    }
+  };
 
   // ── Load saved stations on mount ───────────────────────
   useEffect(() => {
+    let mounted = true;
     const loadSaved = async () => {
       try {
         const locs = await getSavedLocations(sessionId);
-        if (locs) setSavedLocations(locs);
+        if (mounted && locs) setSavedLocations(locs);
       } catch {
         // Non-critical background telemetry load
       }
     };
     loadSaved();
+    return () => { mounted = false; };
   }, [sessionId]);
 
   // ── Location Handlers ──────────────────────────────────
@@ -152,7 +199,7 @@ export default function Dashboard({ onOpenSettings }) {
         name = data.name || name;
         country = data.country || country;
       } catch {
-        // Non-critical reverse geocode fallback
+        // Fallback name
       }
 
       setLocation({ name, country, latitude, longitude });
@@ -194,10 +241,6 @@ export default function Dashboard({ onOpenSettings }) {
     }
   };
 
-  const handleProfileChange = (newProfile) => {
-    setProfile(newProfile);
-  };
-
   // ── Render ────────────────────────────────────────────
   return (
     <div className="app-shell">
@@ -236,7 +279,7 @@ export default function Dashboard({ onOpenSettings }) {
         {error && !loading && !weather && (
           <ErrorState
             message={error}
-            onRetry={() => fetchAll(location)}
+            onRetry={() => fetchAll(location, profile)}
             onSearch={() => {}}
           />
         )}
@@ -255,7 +298,7 @@ export default function Dashboard({ onOpenSettings }) {
               </div>
               <button
                 className="btn-ghost !py-1 !px-2.5 text-xs font-semibold rounded-lg flex items-center gap-1.5"
-                onClick={() => fetchAll(location)}
+                onClick={() => fetchAll(location, profile)}
               >
                 <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
                 <span>Sync Now</span>

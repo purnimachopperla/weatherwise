@@ -1,5 +1,5 @@
 """
-recommendations.py — Personalized recommendation route handlers.
+recommendations.py — Personalized recommendation route handlers with clean error forwarding.
 """
 
 from fastapi import APIRouter, HTTPException, Query
@@ -21,11 +21,6 @@ async def recommendation_endpoint(
 ):
     """
     Get personalized weather recommendations based on user profile.
-
-    The engine analyses real weather + air quality data to generate
-    meaningful, actionable advice for the selected profile.
-
-    Example: GET /api/recommendation?latitude=17.38&longitude=78.46&profile=fitness&location=Hyderabad
     """
     if profile not in VALID_PROFILES:
         raise HTTPException(
@@ -34,7 +29,7 @@ async def recommendation_endpoint(
         )
 
     try:
-        # Fetch both weather and air quality data
+        # Fetch both weather and air quality data (re-uses shared cached telemetry)
         weather_data = await get_weather(latitude, longitude, location)
         air_quality_data = await get_air_quality(latitude, longitude, location)
 
@@ -47,8 +42,10 @@ async def recommendation_endpoint(
         )
         return recommendation
 
-    except Exception as e:
+    except HTTPException:
+        raise
+    except Exception:
         raise HTTPException(
             status_code=503,
-            detail=f"Recommendation service temporarily unavailable: {str(e)}"
+            detail="Recommendation service is temporarily unavailable. Please retry shortly."
         )

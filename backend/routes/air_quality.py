@@ -1,5 +1,5 @@
 """
-air_quality.py — Air quality route handlers.
+air_quality.py — Air quality route handlers with clean error forwarding.
 """
 
 from fastapi import APIRouter, HTTPException, Query
@@ -16,14 +16,14 @@ async def air_quality_endpoint(
 ):
     """
     Get current air quality data including AQI, PM2.5, PM10, Ozone, and UV index.
-
-    Example: GET /api/air-quality?latitude=17.38&longitude=78.46&location=Hyderabad
     """
     try:
         data = await get_air_quality(latitude, longitude, location)
         return data
-    except Exception as e:
+    except HTTPException:
+        raise
+    except Exception:
         raise HTTPException(
             status_code=503,
-            detail=f"Air quality service temporarily unavailable: {str(e)}"
+            detail="Air quality telemetry is temporarily unavailable. Please retry shortly."
         )

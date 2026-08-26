@@ -1,8 +1,5 @@
 """
-weather.py — Weather API route handlers.
-
-These are the URL endpoints that the React frontend calls.
-FastAPI automatically validates parameters and generates API docs.
+weather.py — Weather API route handlers with robust error forwarding and clean message sanitation.
 """
 
 from fastapi import APIRouter, HTTPException, Query
@@ -21,16 +18,16 @@ async def weather_endpoint(
 ):
     """
     Get current weather + hourly + 7-day forecast for a location.
-
-    Example: GET /api/weather?latitude=17.38&longitude=78.46&location=Hyderabad
     """
     try:
         data = await get_weather(latitude, longitude, location)
         return data
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=503,
-            detail=f"Weather service temporarily unavailable: {str(e)}"
+            detail="Weather telemetry service is temporarily unavailable. Please retry shortly."
         )
 
 
@@ -41,7 +38,7 @@ async def forecast_endpoint(
     location: str = Query("Unknown"),
 ):
     """
-    Get just the 7-day daily forecast for a location.
+    Get 7-day daily forecast for a location.
     """
     try:
         data = await get_weather(latitude, longitude, location)
@@ -51,8 +48,13 @@ async def forecast_endpoint(
             "hourly": data["hourly"],
             "fetched_at": data["fetched_at"],
         }
-    except Exception as e:
-        raise HTTPException(status_code=503, detail=str(e))
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(
+            status_code=503,
+            detail="Forecast telemetry is temporarily unavailable. Please retry shortly."
+        )
 
 
 @router.get("/alerts")
@@ -63,7 +65,6 @@ async def alerts_endpoint(
 ):
     """
     Generate weather alerts for a location based on current conditions.
-    Alerts are derived from the weather data (no separate alerts API needed).
     """
     try:
         weather = await get_weather(latitude, longitude, location)
@@ -74,8 +75,13 @@ async def alerts_endpoint(
             "alerts": alerts,
             "fetched_at": weather["fetched_at"],
         }
-    except Exception as e:
-        raise HTTPException(status_code=503, detail=str(e))
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(
+            status_code=503,
+            detail="Alerts telemetry is temporarily unavailable."
+        )
 
 
 def _generate_alerts(weather: dict, air: dict) -> list:

@@ -1,26 +1,28 @@
 """
-air_quality_service.py — Fetches air quality data from Open-Meteo Air Quality API.
+air_quality_service.py — Fetches air quality data from Open-Meteo Air Quality API with caching, singleflight deduplication, and retry logic.
 
 Open-Meteo Air Quality API is FREE and requires NO API key.
 Docs: https://open-meteo.com/en/docs/air-quality-api
 """
 
 import os
+import asyncio
+import logging
 import httpx
 from datetime import datetime, timezone
 from dotenv import load_dotenv
+from fastapi import HTTPException
 from utils.weather_utils import get_aqi_category
+from services.cache_service import air_quality_cache
 
 load_dotenv()
+logger = logging.getLogger("weatherwise.air_quality")
 
 AQ_URL = os.getenv("OPEN_METEO_AIR_QUALITY_URL", "https://air-quality-api.open-meteo.com/v1")
 
 
-async def get_air_quality(lat: float, lon: float, location_name: str = "Unknown") -> dict:
-    """
-    Fetch air quality data for a given location.
-    Returns AQI, PM2.5, PM10, Ozone, NO2, CO, and UV index.
-    """
+async def _fetch_air_quality_upstream(lat: float, lon: float, location_name: str) -> dict:
+    """Make raw HTTP request to Open-Meteo Air Quality API."""
     params = {
         "latitude": lat,
         "longitude": lon,
@@ -41,10 +43,56 @@ async def get_air_quality(lat: float, lon: float, location_name: str = "Unknown"
         "timezone": "auto",
     }
 
-    async with httpx.AsyncClient(timeout=15.0) as client:
-        response = await client.get(f"{AQ_URL}/air-quality", params=params)
-        response.raise_for_status()
-        data = response.json()
+    url = f"{AQ_URL}/air-quality"
+    logger.info(f"[UPSTREAM REQUEST] GET {url} (lat={lat}, lon={lon})")
+
+    max_retries = 2
+    for attempt in range(max_retries + 1):
+        try:
+            async with httpx.AsyncClient(timeout=12.0) as client:
+                response = await client.get(url, params=params)
+
+                if response.status_code == 429:
+                    logger.error(f"[UPSTREAM 429] Open-Meteo Air Quality returned 429 Too Many Requests for ({lat}, {lon})")
+                    raise HTTPException(
+                        status_code=429,
+                        detail="Air quality telemetry provider is temporarily rate-limited. Please retry in a few moments."
+                    )
+
+                response.raise_for_status()
+                data = response.json()
+                break
+        except HTTPException:
+            raise
+        except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.NetworkError) as exc:
+            if attempt < max_retries:
+                backoff = 0.5 * (2 ** attempt)
+                logger.warning(f"[TRANSIENT ERROR] {exc}. Retrying in {backoff:.1f}s (attempt {attempt + 1}/{max_retries})...")
+                await asyncio.sleep(backoff)
+            else:
+                logger.error(f"[UPSTREAM ERROR] Air quality fetch failed after {max_retries} retries: {exc}")
+                raise HTTPException(
+                    status_code=503,
+                    detail="Air quality telemetry provider is temporarily unreachable. Please retry shortly."
+                )
+        except httpx.HTTPStatusError as exc:
+            if exc.response.status_code == 429:
+                logger.error(f"[UPSTREAM 429] Open-Meteo Air Quality returned 429 Too Many Requests for ({lat}, {lon})")
+                raise HTTPException(
+                    status_code=429,
+                    detail="Air quality telemetry provider is temporarily rate-limited. Please retry in a few moments."
+                )
+            logger.error(f"[UPSTREAM HTTP ERROR] {exc.response.status_code}: {exc}")
+            raise HTTPException(
+                status_code=502,
+                detail="Air quality telemetry provider returned an invalid response."
+            )
+        except Exception as exc:
+            logger.error(f"[UPSTREAM UNEXPECTED] {exc}")
+            raise HTTPException(
+                status_code=500,
+                detail="Internal air quality processing error."
+            )
 
     current = data.get("current", {})
 
@@ -67,3 +115,16 @@ async def get_air_quality(lat: float, lon: float, location_name: str = "Unknown"
         "uv_index": current.get("uv_index"),
         "fetched_at": datetime.now(timezone.utc).isoformat(),
     }
+
+
+async def get_air_quality(lat: float, lon: float, location_name: str = "Unknown") -> dict:
+    """
+    Fetch air quality data for a given location.
+    Uses 10-minute server-side caching and singleflight request deduplication.
+    """
+    cache_key = f"air_quality:{round(lat, 2)}:{round(lon, 2)}"
+    return await air_quality_cache.get_or_fetch(
+        cache_key,
+        lambda: _fetch_air_quality_upstream(lat, lon, location_name),
+        ttl_seconds=600.0,
+    )
