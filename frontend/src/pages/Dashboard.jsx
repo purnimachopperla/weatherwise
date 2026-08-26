@@ -2,8 +2,8 @@
  * Dashboard.jsx — Environmental Decision Intelligence Platform (SIH 2024 Edition).
  *
  * Professional UI with uncompressed, generous layout spacing:
- * - 8px consistent spacing system with responsive page padding
- * - Clean multi-column grids and balanced vertical hierarchy
+ * - Direct Flexbox gap-8/gap-9 vertical rhythm across all dashboard sections
+ * - Eliminates React Fragment CSS selector issues so sections never touch
  * - Non-blocking cached telemetry notice
  * - Resilient Promise.allSettled lifecycle
  */
@@ -310,11 +310,11 @@ export default function Dashboard({ onOpenSettings }) {
         onOpenSettings={onOpenSettings}
       />
 
-      {/* Main Content Stream with Generous Section Spacing */}
-      <main className="dashboard-container py-6 sm:py-8 lg:py-10 pb-24 space-y-6 sm:space-y-8 lg:space-y-9">
+      {/* Main Content Stream with Explicit Direct Flexbox Gap */}
+      <main className="dashboard-container py-7 sm:py-9 lg:py-10 pb-28 flex flex-col gap-7 sm:gap-8 lg:gap-9">
         {/* Geolocation Alert Banner */}
         {locationError && (
-          <div className="flex items-center gap-3 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-950 text-xs sm:text-sm fade-in shadow-2xs">
+          <div className="flex items-center gap-3.5 p-4 sm:p-4.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-950 text-xs sm:text-sm fade-in shadow-2xs">
             <AlertTriangle size={18} className="text-amber-600 flex-shrink-0" />
             <p className="flex-1 font-semibold">{locationError}</p>
             <button
@@ -328,7 +328,7 @@ export default function Dashboard({ onOpenSettings }) {
 
         {/* Non-Blocking Cached Data Notice */}
         {isStaleData && weather && (
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:p-4 px-4 sm:px-5 rounded-2xl bg-amber-50/95 border border-amber-200 text-amber-950 text-xs sm:text-sm fade-in shadow-2xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 px-4.5 sm:px-5 rounded-2xl bg-amber-50/95 border border-amber-200 text-amber-950 text-xs sm:text-sm fade-in shadow-2xs">
             <div className="flex items-center gap-2.5">
               <Clock size={16} className="text-amber-700 flex-shrink-0" />
               <span className="font-medium">
@@ -359,9 +359,9 @@ export default function Dashboard({ onOpenSettings }) {
           />
         )}
 
-        {/* Live / Cached Environmental Dashboard Content */}
+        {/* Live / Cached Environmental Dashboard Content (Direct Flexbox Container) */}
         {weather && (
-          <>
+          <div className="flex flex-col gap-7 sm:gap-8 lg:gap-9 w-full">
             {/* Live Telemetry Status Bar */}
             <div className="flex justify-between items-center px-1 text-xs text-slate-500">
               <div className="flex items-center gap-2.5">
@@ -407,14 +407,14 @@ export default function Dashboard({ onOpenSettings }) {
             <HourlyForecast weather={weather} />
 
             {/* 7. Two-Column Analytical Grid: 7-Day Tabular Forecast & (AQI + Charts) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 xl:gap-10 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-7 sm:gap-8 lg:gap-9 items-start">
               {/* Left Column: 7-Day Environmental Forecast Table (lg:col-span-6) */}
               <div className="lg:col-span-6 flex flex-col h-full">
                 <Forecast weather={weather} airQuality={airQuality} />
               </div>
 
               {/* Right Column: Air Quality Pollution Breakdown & 24h Trend Charts (lg:col-span-6) */}
-              <div className="lg:col-span-6 flex flex-col gap-6 lg:gap-8">
+              <div className="lg:col-span-6 flex flex-col gap-7 sm:gap-8">
                 <AQICard airQuality={airQuality} />
                 <WeatherChart weather={weather} airQuality={airQuality} />
               </div>
@@ -428,7 +428,7 @@ export default function Dashboard({ onOpenSettings }) {
               onRemoveLocation={handleRemoveLocation}
               onSaveCurrentLocation={handleSaveCurrentLocation}
             />
-          </>
+          </div>
         )}
       </main>
     </div>
