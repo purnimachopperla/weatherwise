@@ -3,8 +3,8 @@
  *
  * Professional UI with uncompressed, generous layout spacing:
  * - Direct Flexbox gap-8/gap-9 vertical rhythm across all dashboard sections
- * - Eliminates React Fragment CSS selector issues so sections never touch
- * - Non-blocking cached telemetry notice
+ * - Uncompressed cards and clear typography hierarchy
+ * - Non-blocking cached telemetry notice with live status distinction
  * - Resilient Promise.allSettled lifecycle
  */
 
@@ -33,7 +33,7 @@ import {
   saveLocation,
   deleteSavedLocation,
 } from '../services/weatherApi';
-import { RefreshCw, AlertTriangle, Clock } from 'lucide-react';
+import { RefreshCw, AlertTriangle, Clock, Radio } from 'lucide-react';
 
 const DEFAULT_LOCATION = {
   name: 'Hyderabad',
@@ -296,7 +296,7 @@ export default function Dashboard({ onOpenSettings }) {
     }
   };
 
-  const isStaleData = weather?.is_stale || airQuality?.is_stale || Boolean(weather?.cache_notice);
+  const isStaleData = Boolean(weather?.is_stale || airQuality?.is_stale || weather?.cache_notice);
 
   // ── Render ────────────────────────────────────────────
   return (
@@ -310,8 +310,8 @@ export default function Dashboard({ onOpenSettings }) {
         onOpenSettings={onOpenSettings}
       />
 
-      {/* Main Content Stream with Explicit Direct Flexbox Gap */}
-      <main className="dashboard-container py-7 sm:py-9 lg:py-10 pb-28 flex flex-col gap-7 sm:gap-8 lg:gap-9">
+      {/* Main Content Stream with Symmetrical Vertical Rhythm */}
+      <main className="dashboard-container py-7 sm:py-9 lg:py-10 pb-28 flex flex-col gap-8 sm:gap-9 lg:gap-10">
         {/* Geolocation Alert Banner */}
         {locationError && (
           <div className="flex items-center gap-3.5 p-4 sm:p-4.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-950 text-xs sm:text-sm fade-in shadow-2xs">
@@ -332,7 +332,7 @@ export default function Dashboard({ onOpenSettings }) {
             <div className="flex items-center gap-2.5">
               <Clock size={16} className="text-amber-700 flex-shrink-0" />
               <span className="font-medium">
-                Showing recently cached weather data. Live provider is temporarily busy.
+                Showing recently cached weather data. Upstream provider is temporarily busy.
               </span>
             </div>
             <button
@@ -359,15 +359,15 @@ export default function Dashboard({ onOpenSettings }) {
           />
         )}
 
-        {/* Live / Cached Environmental Dashboard Content (Direct Flexbox Container) */}
+        {/* Live / Cached Environmental Dashboard Content */}
         {weather && (
-          <div className="flex flex-col gap-7 sm:gap-8 lg:gap-9 w-full">
+          <div className="flex flex-col gap-8 sm:gap-9 lg:gap-10 w-full">
             {/* Live Telemetry Status Bar */}
             <div className="flex justify-between items-center px-1 text-xs text-slate-500">
               <div className="flex items-center gap-2.5">
                 <span className={`w-2.5 h-2.5 rounded-full ${isStaleData ? 'bg-amber-500' : 'bg-emerald-500 animate-pulse'}`} />
                 <span className="font-bold text-slate-800">
-                  {isStaleData ? 'Cached Telemetry' : 'Live Station Telemetry'}
+                  {isStaleData ? 'Cached Telemetry' : 'Live Telemetry Feed'}
                 </span>
                 <span className="hidden sm:inline text-slate-400">
                   {lastRefresh && `• Synchronized ${lastRefresh.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`}
@@ -407,14 +407,14 @@ export default function Dashboard({ onOpenSettings }) {
             <HourlyForecast weather={weather} />
 
             {/* 7. Two-Column Analytical Grid: 7-Day Tabular Forecast & (AQI + Charts) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-7 sm:gap-8 lg:gap-9 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
               {/* Left Column: 7-Day Environmental Forecast Table (lg:col-span-6) */}
               <div className="lg:col-span-6 flex flex-col h-full">
                 <Forecast weather={weather} airQuality={airQuality} />
               </div>
 
               {/* Right Column: Air Quality Pollution Breakdown & 24h Trend Charts (lg:col-span-6) */}
-              <div className="lg:col-span-6 flex flex-col gap-7 sm:gap-8">
+              <div className="lg:col-span-6 flex flex-col gap-8 lg:gap-10">
                 <AQICard airQuality={airQuality} />
                 <WeatherChart weather={weather} airQuality={airQuality} />
               </div>

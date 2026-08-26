@@ -83,7 +83,7 @@ body {
 
 .dashboard-container {
   width: 100%;
-  max-width: 1380px;
+  max-width: 1400px;
   margin-inline: auto;
   padding-inline: 16px;
 }
@@ -222,7 +222,7 @@ body {
 }
 
 /* ─────────────────────────────────────────────
-   Scrollbar
+   Clean Scrollbars
 ───────────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;

@@ -39,8 +39,8 @@ export default function CurrentWeather({ weather, location, airQuality }) {
 
   return (
     <section aria-label="Environmental Status Hero" className="fade-in w-full">
-      <div className="panel-card p-6 sm:p-8 lg:p-9 xl:p-10 bg-white border border-slate-200">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 xl:gap-10 items-stretch">
+      <div className="panel-card p-6 sm:p-8 lg:p-10 bg-white border border-slate-200 shadow-sm">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 xl:gap-12 items-stretch">
           {/* Left Column: Location, Temperature, Weather Condition (lg:col-span-7) */}
           <div className="lg:col-span-7 flex flex-col justify-between items-start min-w-0">
             {/* Station / Location Pill */}
@@ -98,7 +98,7 @@ export default function CurrentWeather({ weather, location, airQuality }) {
           </div>
 
           {/* Right Column: Environmental Safety Index & Risk Assessment (lg:col-span-5) */}
-          <div className="lg:col-span-5 flex flex-col justify-between p-5 sm:p-6 lg:p-7 rounded-2xl bg-slate-50 border border-slate-200 shadow-2xs">
+          <div className="lg:col-span-5 flex flex-col justify-between p-6 sm:p-7 rounded-2xl bg-slate-50 border border-slate-200 shadow-2xs">
             {/* Header: Title & Risk Badge */}
             <div className="flex items-center justify-between gap-3 pb-3.5 border-b border-slate-200">
               <div className="flex items-center gap-2">

@@ -74,14 +74,14 @@ export default function WeatherStats({ weather, airQuality }) {
 
   return (
     <section aria-label="Environmental Status Metrics" className="fade-in w-full">
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4 lg:gap-4.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5 lg:gap-5">
         {stats.map((stat) => (
           <div
             key={stat.id}
-            className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-all flex flex-col justify-between shadow-2xs min-h-[130px] sm:min-h-[140px]"
+            className="p-5 sm:p-5.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-all flex flex-col justify-between shadow-2xs min-h-[148px] sm:min-h-[156px]"
           >
             {/* Header: Icon + Label */}
-            <div className="flex items-center gap-2.5 mb-2.5">
+            <div className="flex items-center gap-2.5 mb-2">
               <div className="w-7 h-7 rounded-lg bg-slate-100/80 flex items-center justify-center flex-shrink-0 border border-slate-200/60">
                 {stat.icon}
               </div>
@@ -103,7 +103,7 @@ export default function WeatherStats({ weather, airQuality }) {
             </div>
 
             {/* Sublabel status */}
-            <div className="text-[11px] font-medium text-slate-500 truncate mt-1 pt-1.5 border-t border-slate-100">
+            <div className="text-[11px] font-medium text-slate-500 truncate mt-2 pt-2 border-t border-slate-100">
               Status: <span className="font-bold text-slate-800">{stat.sub}</span>
             </div>
           </div>

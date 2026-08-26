@@ -66,7 +66,7 @@ export default function RecommendationCard({ recommendation, loading, airQuality
 
   return (
     <section aria-label="Environmental Intelligence Engine" className="fade-in w-full">
-      <div className="panel-card p-6 sm:p-8 lg:p-10 bg-white border border-slate-200 flex flex-col gap-6 sm:gap-7">
+      <div className="panel-card p-6 sm:p-8 lg:p-10 bg-white border border-slate-200 shadow-sm flex flex-col gap-6 sm:gap-7">
         {/* 1. Module Header Row */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-200">
           <div className="flex items-center gap-3.5">
@@ -98,7 +98,7 @@ export default function RecommendationCard({ recommendation, loading, airQuality
         </div>
 
         {/* 2. Executive Summary Statement */}
-        <div className="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-4">
+        <div className="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-4 shadow-2xs">
           <CheckCircle2 size={22} className="text-teal-700 flex-shrink-0 mt-0.5" />
           <div className="flex-1">
             <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">
@@ -111,24 +111,24 @@ export default function RecommendationCard({ recommendation, loading, airQuality
         </div>
 
         {/* 3. Multi-Factor Analytical Reasoning Bar */}
-        <div className="p-5 sm:p-6 rounded-2xl bg-slate-100/80 border border-slate-200">
+        <div className="p-5 sm:p-6 rounded-2xl bg-slate-100/80 border border-slate-200 shadow-2xs">
           <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3.5">
             Multi-Parameter Reasoning Matrix
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 text-xs">
-            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between min-h-[72px]">
+            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between min-h-[76px]">
               <span className="text-slate-500 text-xs font-medium block mb-1">Air Quality Factor</span>
               <span className="font-bold text-slate-900 text-sm">AQI {Math.round(aqi)} ({aqi <= 50 ? 'Favorable' : 'Moderate'})</span>
             </div>
-            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between min-h-[72px]">
+            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between min-h-[76px]">
               <span className="text-slate-500 text-xs font-medium block mb-1">Solar Radiation Factor</span>
               <span className="font-bold text-slate-900 text-sm">UV Index {uv.toFixed(1)} ({uv < 6 ? 'Low-Moderate' : 'Elevated'})</span>
             </div>
-            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between min-h-[72px]">
+            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between min-h-[76px]">
               <span className="text-slate-500 text-xs font-medium block mb-1">Precipitation Factor</span>
               <span className="font-bold text-slate-900 text-sm">{rain}% Chance ({rain < 30 ? 'Minimal' : 'Likely'})</span>
             </div>
-            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between min-h-[72px]">
+            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between min-h-[76px]">
               <span className="text-slate-500 text-xs font-medium block mb-1">Thermal Load Factor</span>
               <span className="font-bold text-slate-900 text-sm">{Math.round(temp)}°C (Nominal Range)</span>
             </div>
@@ -136,7 +136,7 @@ export default function RecommendationCard({ recommendation, loading, airQuality
         </div>
 
         {/* 4. Actionable Guidance Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4.5 sm:gap-5.5">
           {recommendation.items.map((item, i) => {
             const style = getSeverityStyle(item.severity);
             const IconComponent = ICON_MAP[item.icon] || Activity;
@@ -151,7 +151,7 @@ export default function RecommendationCard({ recommendation, loading, airQuality
                 }}
               >
                 <div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
+                  className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 shadow-2xs"
                   style={{
                     backgroundColor: style.badge,
                     color: style.text,
